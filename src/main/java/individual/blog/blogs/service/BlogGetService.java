@@ -39,6 +39,7 @@ public class BlogGetService {
                 blogDto.setTitle(blog.getTitle());
                 blogDto.setContent(blog.getContent());
                 blogDto.setImgUrl(blog.getUrlImg());
+                blogDto.setLocalDate(blog.getCreateAt().toLocalDate());
                 blogDtoList.add(blogDto);
             }
             return ResponseDto.setSuccess("200", "list 조회성공", blogDtoList);
