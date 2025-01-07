@@ -7,11 +7,16 @@ import individual.blog.blogs.dto.BlogDto;
 import individual.blog.blogs.service.BlogDeleteService;
 import individual.blog.blogs.service.BlogGetService;
 import individual.blog.blogs.service.BlogWriteService;
+import individual.blog.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,6 +26,7 @@ public class BlogController {
     private final BlogGetService blogGetService;
     private final BlogWriteService blogWriteService;
     private final BlogDeleteService blogDeleteService;
+    private final CustomFileUtil customFileUtil;
 
 
     @GetMapping("/blog")
@@ -44,5 +50,22 @@ public class BlogController {
     @DeleteMapping("/blog/{blogId}")
     public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId){
         return blogDeleteService.blogDelete(blogId);
+    }
+
+    @PostMapping(value = "/upload", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Object> imgUpload(@RequestPart(value="files", required=false) MultipartFile[] files){
+        List<String> savedFilesDeatil = new ArrayList<>();
+        if(files != null){
+            try {
+                savedFilesDeatil = customFileUtil.saveFiles(files);
+                if(!savedFilesDeatil.isEmpty()){
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResponseEntity.badRequest().body("No files uploaded or files could not be saved.");
+
     }
 }
