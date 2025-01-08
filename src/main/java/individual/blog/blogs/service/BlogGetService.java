@@ -38,7 +38,7 @@ public class BlogGetService {
                 blogDto.setId(blog.getId());
                 blogDto.setTitle(blog.getTitle());
                 blogDto.setContent(blog.getContent());
-                blogDto.setImgUrl(blog.getUrlImg());
+//                blogDto.setImgUrl();
                 blogDto.setLocalDate(blog.getCreateAt().toLocalDate());
                 blogDtoList.add(blogDto);
             }
@@ -56,7 +56,7 @@ public class BlogGetService {
             BlogDetailDto blogDetailDto = new BlogDetailDto();
             blogDetailDto.setTitle(blogOptional.get().getTitle());
             blogDetailDto.setContent(blogOptional.get().getContent());
-            blogDetailDto.setImgUrl(blogOptional.get().getUrlImg());
+//            blogDetailDto.setImgUrl(blogOptional.get().getUrlImg());
             return ResponseDto.setSuccess("200", "상세 정보 조회 성공", blogDetailDto);
         } catch (Exception e){
             return ResponseDto.setFailed("000", "상세 정보 못 찾음");

@@ -53,19 +53,20 @@ public class BlogController {
     }
 
     @PostMapping(value = "/upload", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> imgUpload(@RequestPart(value="files", required=false) MultipartFile[] files){
+    public ResponseEntity<Object> imgUpload(@RequestPart(value="files", required=false) List<MultipartFile> files){
         List<String> savedFilesDeatil = new ArrayList<>();
         if(files != null){
             try {
                 savedFilesDeatil = customFileUtil.saveFiles(files);
                 if(!savedFilesDeatil.isEmpty()){
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    ResponseDto responseDto = ResponseDto.setSuccess("200","이미지 업로드 성공", null);
+                    return new ResponseEntity<>(responseDto, HttpStatus.OK);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return ResponseEntity.badRequest().body("No files uploaded or files could not be saved.");
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     }
 }

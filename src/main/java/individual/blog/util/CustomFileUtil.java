@@ -37,13 +37,14 @@ public class CustomFileUtil {
         log.info("------------------");
     }
 
-    public List<String> saveFiles(MultipartFile[] files) throws IOException {
-        if(files ==null || files.length==0){
+    public List<String> saveFiles(List<MultipartFile> files) throws IOException {
+        if(files ==null || files.isEmpty()){
+            log.info("파일이 없음 ");
             return null;
         }
         List<String> uploadNames = new ArrayList<>();
         for(MultipartFile file : files){
-            String saveName = UUID.randomUUID().toString()+"_"+file.getOriginalFilename();
+            String saveName = file.getOriginalFilename();
             Path savePath = Paths.get(uploadPath, saveName);
             try{
                 Files.copy(file.getInputStream(), savePath);

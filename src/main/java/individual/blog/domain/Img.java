@@ -1,32 +1,26 @@
 package individual.blog.domain;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-
 @Entity
 @Getter
 @Setter
 @Data
-public class Blog {
+public class Img {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
-    private Long id;
+    private long id;
+
+    @ManyToOne
+    @JoinColumn(name="blog_id", nullable = false)
+    private Blog blog;
 
     @Column
-    private String title;
+    private String urlImg;
 
-    @Column
-    private String content;
-
-    @Column
-    private LocalDateTime createAt;
 
 }

@@ -8,6 +8,6 @@ import lombok.Setter;
 public class BlogAddDto {
     private String title;
     private String content;
-    private String imgUrl;
+    private String imgUrl[];
     private String createAt;
 }
