@@ -9,6 +9,7 @@ import individual.blog.blogs.service.BlogGetService;
 import individual.blog.blogs.service.BlogWriteService;
 import individual.blog.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class BlogController {
+    @Value("${spring.blog.upload.path}")
+    private String uploadPath;
 
     private final BlogGetService blogGetService;
     private final BlogWriteService blogWriteService;
@@ -59,7 +63,10 @@ public class BlogController {
             try {
                 savedFilesDeatil = customFileUtil.saveFiles(files);
                 if(!savedFilesDeatil.isEmpty()){
-                    ResponseDto responseDto = ResponseDto.setSuccess("200","이미지 업로드 성공", null);
+                    List<String> fullFileDeatils = savedFilesDeatil.stream()
+                            .map(fileName -> uploadPath+"/"+fileName)
+                            .collect(Collectors.toList());
+                    ResponseDto responseDto = ResponseDto.setSuccess("200","이미지 업로드 성공", fullFileDeatils);
                     return new ResponseEntity<>(responseDto, HttpStatus.OK);
                 }
             } catch (IOException e) {

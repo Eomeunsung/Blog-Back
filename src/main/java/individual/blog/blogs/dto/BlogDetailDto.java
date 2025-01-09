@@ -9,4 +9,8 @@ public class BlogDetailDto {
     private String title;
     private String content;
     private String imgUrl;
+
+    public void getImgUrl(String urlImg) {
+        
+    }
 }
