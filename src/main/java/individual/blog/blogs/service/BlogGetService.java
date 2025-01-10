@@ -3,11 +3,8 @@ package individual.blog.blogs.service;
 import individual.blog.Reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogDto;
-import individual.blog.blogs.dto.BlogGetTitleDto;
 import individual.blog.blogs.repostiory.BlogRepostiory;
-import individual.blog.blogs.repostiory.ImgRepostiory;
 import individual.blog.domain.Blog;
-import individual.blog.domain.Img;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +17,9 @@ import java.util.Optional;
 @Service
 public class BlogGetService {
     private final BlogRepostiory blogRepostiory;
-    private final ImgRepostiory imgRepostiory;
 
-    public BlogGetService(BlogRepostiory blogRepostiory, ImgRepostiory imgRepostiory) {
+    public BlogGetService(BlogRepostiory blogRepostiory) {
         this.blogRepostiory = blogRepostiory;
-        this.imgRepostiory = imgRepostiory;
     }
 
     @Transactional
@@ -57,12 +52,12 @@ public class BlogGetService {
         try{
             Optional<Blog> blogOptional = blogRepostiory.findById(id);
             blogOptional.orElseThrow(()-> new IllegalArgumentException("상세 정보를 못 찾음"));
-            Optional<Img> imgOptional = imgRepostiory.findByBlog_Id(id);
-            imgOptional.orElseThrow(()-> new IllegalArgumentException("이미지가 없음"));
+//            Optional<Img> imgOptional = imgRepostiory.findByBlog_Id(id);
+//            imgOptional.orElseThrow(()-> new IllegalArgumentException("이미지가 없음"));
             BlogDetailDto blogDetailDto = new BlogDetailDto();
             blogDetailDto.setTitle(blogOptional.get().getTitle());
             blogDetailDto.setContent(blogOptional.get().getContent());
-            blogDetailDto.setImgUrl(imgOptional.get().getUrlImg());
+//            blogDetailDto.setImgUrl(imgOptional.get().getUrlImg());
             return ResponseDto.setSuccess("200", "상세 정보 조회 성공", blogDetailDto);
         } catch (Exception e){
             return ResponseDto.setFailed("000", "상세 정보 못 찾음");
