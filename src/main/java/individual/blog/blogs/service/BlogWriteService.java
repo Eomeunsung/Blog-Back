@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -29,15 +31,19 @@ public class BlogWriteService {
             blog.setTitle(blogAddDto.getTitle());
             blog.setContent(blogAddDto.getContent());
             blog.setCreateAt(LocalDateTime.now());
+            log.info("이미지 "+blogAddDto.getImgUrl());
             blogRepostiory.save(blog);
-            if(blogAddDto.getImgUrl().length!=0){
-                for(String imgs : blogAddDto.getImgUrl()){
+            if(blogAddDto.getImgUrl()!=null && !blogAddDto.getImgUrl().isEmpty() ){
+                List<Img> imgList = new ArrayList<>();
+                for(String url : blogAddDto.getImgUrl()){
                     Img img = new Img();
-                    img.setUrlImg(imgs);
+                    img.setUrlImg(url);
                     img.setBlog(blog);
-                    imgRepostiory.save(img);
+                    imgList.add(img);
                 }
+                imgRepostiory.saveAll(imgList);
             }
+
             return ResponseDto.setSuccess("200", "글 작성 성공", null);
         }catch (Exception e){
             e.printStackTrace();
