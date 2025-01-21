@@ -4,11 +4,14 @@ import individual.blog.Reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogAddDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogDto;
+import individual.blog.blogs.dto.BlogUpdateDto;
 import individual.blog.blogs.service.BlogDeleteService;
 import individual.blog.blogs.service.BlogGetService;
+import individual.blog.blogs.service.BlogUpdateService;
 import individual.blog.blogs.service.BlogWriteService;
 import individual.blog.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Log4j2
 public class BlogController {
     @Value("${spring.blog.upload.path}")
     private String uploadPath;
@@ -31,6 +35,7 @@ public class BlogController {
     private final BlogWriteService blogWriteService;
     private final BlogDeleteService blogDeleteService;
     private final CustomFileUtil customFileUtil;
+    private final BlogUpdateService blogUpdateService;
 
 
     @GetMapping("/blog")
@@ -54,6 +59,13 @@ public class BlogController {
     @DeleteMapping("/blog/{blogId}")
     public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId){
         return blogDeleteService.blogDelete(blogId);
+    }
+
+    @PutMapping("/blog")
+    public ResponseEntity<ResponseDto<Object>> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto){
+        log.info("블로그 아이이디 "+blogUpdateDto.getId());
+        ResponseDto<Object> responseDto = blogUpdateService.blogUpdate(blogUpdateDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @PostMapping(value = "/upload", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
