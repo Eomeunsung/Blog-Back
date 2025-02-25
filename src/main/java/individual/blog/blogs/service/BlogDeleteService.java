@@ -1,10 +1,10 @@
 package individual.blog.blogs.service;
 
-import individual.blog.Reponse.ResponseDto;
-import individual.blog.blogs.repostiory.BlogRepostiory;
-import individual.blog.blogs.repostiory.ImgRepostiory;
-import individual.blog.domain.Blog;
-import individual.blog.domain.Img;
+import individual.blog.reponse.ResponseDto;
+import individual.blog.blogs.repository.BlogRepository;
+import individual.blog.blogs.repository.ImgRepository;
+import individual.blog.domain.entity.Blog;
+import individual.blog.domain.entity.Img;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -21,15 +21,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Log4j2
 public class BlogDeleteService {
-    private final BlogRepostiory blogRepostiory;
-    private final ImgRepostiory imgRepostiory;
+    private final BlogRepository blogRepository;
+    private final ImgRepository imgRepostiory;
 
 
     @Transactional
     public ResponseEntity blogDelete(Long blogId) {
         try {
             // Blog 조회
-            Blog blog = blogRepostiory.findById(blogId)
+            Blog blog = blogRepository.findById(blogId)
                     .orElseThrow(() -> new IllegalArgumentException("Blog 못 찾음"));
 
             // Img 조회 및 삭제
@@ -50,7 +50,7 @@ public class BlogDeleteService {
             }
 
             // Blog 삭제
-            blogRepostiory.deleteById(blogId);
+            blogRepository.deleteById(blogId);
 
             // 성공 응답 반환
             ResponseDto responseDto = ResponseDto.setSuccess("200", "Blog 삭제 성공", null);

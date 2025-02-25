@@ -1,6 +1,6 @@
-package individual.blog.blogs;
+package individual.blog.blogs.controller;
 
-import individual.blog.Reponse.ResponseDto;
+import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogAddDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogDto;

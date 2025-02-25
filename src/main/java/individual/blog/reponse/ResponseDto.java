@@ -1,4 +1,4 @@
-package individual.blog.Reponse;
+package individual.blog.reponse;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +17,10 @@ public class ResponseDto <T> implements Serializable {
 
     public static <T> ResponseDto<T> setSuccess(String code, String message, T data){
         return new ResponseDto<>(code, 200, message, data);
+    }
+
+    public static <T> ResponseDto<T> setSuccess(String code, String message){
+        return new ResponseDto<>(code, 200, message, null);
     }
     public static <T> ResponseDto<T> setFailed(String code, String message){
         return new ResponseDto<>(code, 500, message, null);

@@ -1,19 +1,21 @@
-package individual.blog.config;
+package individual.blog.security.configs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class Config implements WebMvcConfigurer {
+public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         WebMvcConfigurer.super.addCorsMappings(registry);
-        registry.addMapping("/**")
-                .allowedMethods("*")
-                .allowedOrigins("*")
-                .exposedHeaders("*")
+        registry
+                .addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .maxAge(3000);
+                .allowCredentials(false);
     }
+
+
 }

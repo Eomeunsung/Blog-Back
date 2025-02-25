@@ -1,6 +1,6 @@
 package individual.blog.blogs.dto;
 
-import individual.blog.domain.Blog;
+import individual.blog.domain.entity.Blog;
 import lombok.Getter;
 import lombok.Setter;
 

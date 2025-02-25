@@ -1,4 +1,4 @@
-package individual.blog.config;
+package individual.blog.security.configs;
 
 
 import io.swagger.v3.oas.models.Components;

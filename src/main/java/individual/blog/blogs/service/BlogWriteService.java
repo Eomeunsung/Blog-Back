@@ -1,11 +1,11 @@
 package individual.blog.blogs.service;
 
-import individual.blog.Reponse.ResponseDto;
+import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogAddDto;
-import individual.blog.blogs.repostiory.BlogRepostiory;
-import individual.blog.blogs.repostiory.ImgRepostiory;
-import individual.blog.domain.Blog;
-import individual.blog.domain.Img;
+import individual.blog.blogs.repository.BlogRepository;
+import individual.blog.blogs.repository.ImgRepository;
+import individual.blog.domain.entity.Blog;
+import individual.blog.domain.entity.Img;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogWriteService {
 
-    private final BlogRepostiory blogRepostiory;
-    private final ImgRepostiory imgRepostiory;
+    private final BlogRepository blogRepository;
+    private final ImgRepository imgRepostiory;
 
     @Transactional
     public ResponseDto<ResponseDto<BlogAddDto>> blogWirte(BlogAddDto blogAddDto){
@@ -32,7 +32,7 @@ public class BlogWriteService {
             blog.setContent(blogAddDto.getContent());
             blog.setCreateAt(LocalDateTime.now());
             log.info("이미지 "+blogAddDto.getImgUrl());
-            blogRepostiory.save(blog);
+            blogRepository.save(blog);
             if(blogAddDto.getImgUrl()!=null && !blogAddDto.getImgUrl().isEmpty() ){
                 List<Img> imgList = new ArrayList<>();
                 for(String url : blogAddDto.getImgUrl()){

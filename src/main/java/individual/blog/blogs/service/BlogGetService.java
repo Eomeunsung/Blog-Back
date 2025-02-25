@@ -1,10 +1,10 @@
 package individual.blog.blogs.service;
 
-import individual.blog.Reponse.ResponseDto;
+import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogDto;
-import individual.blog.blogs.repostiory.BlogRepostiory;
-import individual.blog.domain.Blog;
+import individual.blog.blogs.repository.BlogRepository;
+import individual.blog.domain.entity.Blog;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,17 +16,17 @@ import java.util.Optional;
 @Log4j2
 @Service
 public class BlogGetService {
-    private final BlogRepostiory blogRepostiory;
+    private final BlogRepository blogRepository;
 
-    public BlogGetService(BlogRepostiory blogRepostiory) {
-        this.blogRepostiory = blogRepostiory;
+    public BlogGetService(BlogRepository blogRepository) {
+        this.blogRepository = blogRepository;
     }
 
     @Transactional
     public ResponseDto<List<BlogDto>> blogList() {
      
         try {
-            List<Blog> blogOptional = blogRepostiory.findAllBy();
+            List<Blog> blogOptional = blogRepository.findAllBy();
             log.info("리스트 "+blogOptional);
             if (blogOptional == null) {
                 return ResponseDto.setFailed("000", "데이터 없음");
@@ -50,7 +50,7 @@ public class BlogGetService {
     @Transactional
     public ResponseDto<BlogDetailDto> blogDetail(Long id){
         try{
-            Optional<Blog> blogOptional = blogRepostiory.findById(id);
+            Optional<Blog> blogOptional = blogRepository.findById(id);
             blogOptional.orElseThrow(()-> new IllegalArgumentException("상세 정보를 못 찾음"));
 //            Optional<Img> imgOptional = imgRepostiory.findByBlog_Id(id);
 //            imgOptional.orElseThrow(()-> new IllegalArgumentException("이미지가 없음"));
