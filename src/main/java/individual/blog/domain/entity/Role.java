@@ -29,11 +29,11 @@ public class Role implements Serializable {
     @Column(name = "is_expression")
     private String isExpression;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roleSet", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "roleSet", cascade = CascadeType.ALL)
     @OrderBy("orderNum desc")
     private Set<Resources> resourcesSet = new LinkedHashSet<>();
 
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "userRoles", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "userRoles", cascade = CascadeType.ALL)
     private Set<Account> accounts = new HashSet<>();
 }

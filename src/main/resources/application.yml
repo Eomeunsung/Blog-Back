@@ -28,8 +28,12 @@ spring:
         - file:Img/
 
 jwt:
-  access-secret: 6EF3C725B7A8CDDE9656E6BBF875A8A70D3F52EFC2E9F24D9A4FF2B20D39B14A4
-  refresh-secret: 1DF7DCA25F2E53946FF9D679397D7F11A8E84B6C93F91F10665F6EC1A62E5640
-  access-expiration: 600000  # 10 min: 10min * 60 sec * 1000 millisecond
-  refresh-expiration: 86400000  # 24 hours: 24 * 60 * 60 * 1000 millisecond
+  refresh:
+    secret:
+      key: acecdd6ae217517dcdeb8db20e0aa74c6c188680101a95c60b2996a8a1cfd51a2950393e36d8154eed556cc3994c85088aa002788da9aa5e33066bc56cd12d1e
+  secret:
+    key: 7ZWt7ZW0OTntmZTsnbTtjIXtlZzqta3snYTrhIjrqLjshLjqs4TroZzrgpjslYTqsIDsnpDtm4zrpa3tlZzqsJzrsJzsnpDrpbzrp4zrk6TslrTqsIDsnpA=
+
+#debug : true
+ # 24 hours: 24 * 60 * 60 * 1000 millisecond
 

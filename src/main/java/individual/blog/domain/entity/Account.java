@@ -29,7 +29,7 @@ public class Account implements Serializable {
     @Column
     String password;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade={CascadeType.MERGE})
+    @ManyToMany(cascade={CascadeType.MERGE})
     @JoinTable(name = "account_roles", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
             @JoinColumn(name = "role_id") })
     @ToString.Exclude

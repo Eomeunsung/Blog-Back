@@ -4,24 +4,36 @@ package individual.blog.security.jwt;
 import individual.blog.security.jwt.jwtException.JwtException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.Key;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
 @Log4j2
 public class JwtUtil {
+    @Value("${jwt.secret.key}")
+    private String secretKey;
 
-    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private Key key;
+
+    private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    @PostConstruct
+    public void init(){
+        byte[] bytes = Base64.getDecoder().decode(secretKey);
+        key = Keys.hmacShaKeyFor(bytes);
+    }
+
 
     public String createToken(UserDetails userDetails){
         return Jwts.builder()
@@ -29,8 +41,8 @@ public class JwtUtil {
                 .setClaims(createClaims(userDetails))
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*10))
-                .signWith(SECRET_KEY)
+                .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*60*1))
+                .signWith(key, signatureAlgorithm)
                 .compact();
     }
 
@@ -49,12 +61,18 @@ public class JwtUtil {
 
     // JWT 토큰에서 모든 클레임을 추출하는 메서드
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try{
+            return Jwts.parser()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        }catch (ExpiredJwtException e){
+            throw new JwtException("Expired JWT token");
+        }
+
     }
+
 
     // 토큰 만료 여부를 확인하는 메서드
     private Boolean isTokenExpired(String token){
@@ -103,6 +121,7 @@ public class JwtUtil {
     private Map<String, Object> createClaims(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", userDetails.getUsername());
+        log.info("권항 "+userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
         claims.put("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
         return claims;
     }

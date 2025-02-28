@@ -2,6 +2,7 @@ package individual.blog.security.service;
 
 import individual.blog.domain.entity.Account;
 import individual.blog.domain.repository.AccountRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,6 +27,7 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(email);
 
@@ -36,6 +38,7 @@ public class CustomUserDetailService implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = account.getUserRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName())) // 수정된 부분
                 .collect(Collectors.toList());
+        log.info("커스텀 유저 권한 "+authorities);
 
         return new User(
                 account.getEmail(),

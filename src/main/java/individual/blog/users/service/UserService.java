@@ -11,6 +11,7 @@ import individual.blog.users.dto.SignUpDto;
 import individual.blog.domain.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
@@ -43,6 +45,9 @@ public class UserService {
             account.setName(signUpDto.getName());
             account.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
             Set<Role> role = roleRepository.findByRoleNameIn(signUpDto.getRoles());
+            for(Role roles : role){
+                log.info("회원가입 로그 "+roles.getRoleName());
+            }
 
             account.setUserRoles(role);
             accountRepository.save(account);
