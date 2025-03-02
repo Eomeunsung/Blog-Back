@@ -8,10 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -34,6 +33,16 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<?>> login(@RequestBody SignInDto signInDto){
         ResponseDto responseDto = userService.signIn(signInDto);
+        if(responseDto.getCode().equals("200")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/myprofile")
+    public ResponseEntity<ResponseDto<?>> myProfile(@AuthenticationPrincipal User user){
+        ResponseDto responseDto = userService.myProfile(user);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

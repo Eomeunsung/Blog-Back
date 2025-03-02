@@ -9,6 +9,8 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -29,5 +31,8 @@ public class Blog implements Serializable {
 
     @Column
     private LocalDateTime createAt;
+
+    @ManyToMany(mappedBy = "blog", cascade = CascadeType.ALL)
+    private Set<Account> account = new HashSet<>();
 
 }

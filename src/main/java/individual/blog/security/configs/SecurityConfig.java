@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
                         .requestMatchers("user/**").permitAll()  // 여기서 `/signup` 추가!
+                        .requestMatchers("/blog/list", "blog/{blogId}","/**").permitAll()
                         .requestMatchers("/blog/**","/upload/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )

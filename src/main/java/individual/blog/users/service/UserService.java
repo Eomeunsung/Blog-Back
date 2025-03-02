@@ -1,6 +1,8 @@
 package individual.blog.users.service;
 
+import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.entity.Account;
+import individual.blog.domain.entity.Blog;
 import individual.blog.domain.entity.Role;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.domain.repository.RoleRepository;
@@ -12,11 +14,14 @@ import individual.blog.domain.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -33,6 +38,8 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     private final RoleRepository roleRepository;
+
+    private final BlogRepository blogRepository;
     @Transactional
     public ResponseDto<?> create(SignUpDto signUpDto){
         try{
@@ -45,10 +52,6 @@ public class UserService {
             account.setName(signUpDto.getName());
             account.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
             Set<Role> role = roleRepository.findByRoleNameIn(signUpDto.getRoles());
-            for(Role roles : role){
-                log.info("회원가입 로그 "+roles.getRoleName());
-            }
-
             account.setUserRoles(role);
             accountRepository.save(account);
             return ResponseDto.setSuccess("200", "회원가입이 완료되었습니다.");
@@ -80,6 +83,29 @@ public class UserService {
         }catch (Exception e){
             return ResponseDto.setFailed("403", "로그인 다시 진행해 주시기 바랍니다.");
         }
+    }
 
+    @Transactional
+    public ResponseDto<?> myProfile(User user){
+        try{
+            String email = user.getUsername();
+            Account account = accountRepository.findByEmail(email);
+            Long id = account.getId();
+            List<Blog> blogList =blogRepository.findByAccount_Id(id);
+            List<Blog> blogLists = new ArrayList<>();
+            if(!blogList.isEmpty()){
+                for(Blog blogs : blogList){
+                    Blog blog = new Blog();
+                    blog.setId(blogs.getId());
+                    blog.setTitle(blogs.getTitle());
+                    blog.setContent(blogs.getContent());
+                    blog.setCreateAt(blogs.getCreateAt());
+                    blogLists.add(blog);
+                }
+            }
+            return ResponseDto.setSuccess("200", "블로그 데이터", blogLists);
+        }catch (Exception e){
+            return ResponseDto.setFailed("500", "블로그 정보 불러오기 실패");
+        }
     }
 }

@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,7 +30,13 @@ public class Account implements Serializable {
     @Column
     String password;
 
-    @ManyToMany(cascade={CascadeType.MERGE})
+    @ManyToMany(cascade={CascadeType.ALL})
+    @JoinTable(name = "account_blog", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
+            @JoinColumn(name = "blog_id") })
+    @ToString.Exclude
+    private Set<Blog> blog = new HashSet<>();
+
+    @ManyToMany(cascade={CascadeType.ALL})
     @JoinTable(name = "account_roles", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
             @JoinColumn(name = "role_id") })
     @ToString.Exclude

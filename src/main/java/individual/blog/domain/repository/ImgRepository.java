@@ -1,4 +1,4 @@
-package individual.blog.blogs.repository;
+package individual.blog.domain.repository;
 
 import individual.blog.domain.entity.Img;
 import org.springframework.data.jpa.repository.JpaRepository;

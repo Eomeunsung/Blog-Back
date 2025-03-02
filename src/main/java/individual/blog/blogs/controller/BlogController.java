@@ -1,5 +1,6 @@
 package individual.blog.blogs.controller;
 
+import individual.blog.domain.entity.Account;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogAddDto;
 import individual.blog.blogs.dto.BlogDetailDto;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
+@RequestMapping("/blog")
 public class BlogController {
     @Value("${spring.blog.upload.path}")
     private String uploadPath;
@@ -38,30 +42,30 @@ public class BlogController {
     private final BlogUpdateService blogUpdateService;
 
 
-    @GetMapping("/blog")
+    @GetMapping("/list")
     public ResponseEntity<ResponseDto<List<BlogDto>>> blogGetAllList(){
         ResponseDto<List<BlogDto>> responseDto = blogGetService.blogList();
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/blog/{blogId}")
+    @GetMapping("/{blogId}")
     public ResponseEntity<ResponseDto<BlogDetailDto>> blogDetail(@PathVariable Long blogId){
         ResponseDto<BlogDetailDto> responseDto = blogGetService.blogDetail(blogId);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @PostMapping("/blog/write")
-    public ResponseEntity<ResponseDto<BlogAddDto>> blogWrite(@RequestBody BlogAddDto blogAddDto){
-        ResponseDto<BlogAddDto> responseDto = blogWriteService.blogWirte(blogAddDto).getData();
+    @PostMapping("/write")
+    public ResponseEntity<ResponseDto<BlogAddDto>> blogWrite(@RequestBody BlogAddDto blogAddDto, @AuthenticationPrincipal User user){
+        ResponseDto<BlogAddDto> responseDto = blogWriteService.blogWirte(blogAddDto, user).getData();
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/blog/{blogId}")
-    public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId){
-        return blogDeleteService.blogDelete(blogId);
+    @DeleteMapping("/{blogId}")
+    public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId, @AuthenticationPrincipal User user){
+        return blogDeleteService.blogDelete(blogId, user);
     }
 
-    @PutMapping("/blog")
+    @PutMapping("")
     public ResponseEntity<ResponseDto<Object>> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto){
         log.info("블로그 아이이디 "+blogUpdateDto.getId());
         ResponseDto<Object> responseDto = blogUpdateService.blogUpdate(blogUpdateDto);

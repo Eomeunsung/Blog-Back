@@ -2,8 +2,8 @@ package individual.blog.blogs.service;
 
 import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogUpdateDto;
-import individual.blog.blogs.repository.BlogRepository;
-import individual.blog.blogs.repository.ImgRepository;
+import individual.blog.domain.repository.BlogRepository;
+import individual.blog.domain.repository.ImgRepository;
 import individual.blog.domain.entity.Blog;
 import individual.blog.domain.entity.Img;
 import lombok.AllArgsConstructor;

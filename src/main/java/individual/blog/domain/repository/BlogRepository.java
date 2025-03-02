@@ -1,4 +1,4 @@
-package individual.blog.blogs.repository;
+package individual.blog.domain.repository;
 
 import individual.blog.domain.entity.Blog;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +10,6 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<Blog> findAllBy();
 
     Optional<Blog> findById(Long id);
+
+    List<Blog> findByAccount_Id(Long accountId);
 }

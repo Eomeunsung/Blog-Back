@@ -3,7 +3,7 @@ package individual.blog.blogs.service;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogDto;
-import individual.blog.blogs.repository.BlogRepository;
+import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.entity.Blog;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

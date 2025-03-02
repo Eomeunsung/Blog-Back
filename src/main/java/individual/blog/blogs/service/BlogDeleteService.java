@@ -1,14 +1,17 @@
 package individual.blog.blogs.service;
 
-import individual.blog.reponse.ResponseDto;
-import individual.blog.blogs.repository.BlogRepository;
-import individual.blog.blogs.repository.ImgRepository;
+import individual.blog.domain.entity.Account;
 import individual.blog.domain.entity.Blog;
 import individual.blog.domain.entity.Img;
+import individual.blog.domain.repository.AccountRepository;
+import individual.blog.domain.repository.BlogRepository;
+import individual.blog.domain.repository.ImgRepository;
+import individual.blog.reponse.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,14 +28,36 @@ import java.util.List;
 public class BlogDeleteService {
     private final BlogRepository blogRepository;
     private final ImgRepository imgRepostiory;
+    private final AccountRepository accountRepository;
 
 
     @Transactional
-    public ResponseEntity blogDelete(Long blogId) {
+    public ResponseEntity blogDelete(Long blogId, User user) {
         try {
+
+            Account account = accountRepository.findByEmail(user.getUsername());
+            if(account==null){
+                ResponseDto responseDto = ResponseDto.setFailed("404", "Blog를 찾을 수 없습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+            }
             // Blog 조회
             Blog blog = blogRepository.findById(blogId)
                     .orElseThrow(() -> new IllegalArgumentException("Blog 못 찾음"));
+
+            Set<Account> ac = blog.getAccount();
+            for(Account account1 : ac ){
+                log.info("아이디 "+account1.getId());
+            }
+
+            for( Account account1 : ac){
+                if(account1.getId() != account.getId()){
+                    ResponseDto responseDto = ResponseDto.setFailed("403", "권한이 없습니다.");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+                }
+            }
+            
+            account.getBlog().remove(blog);
+            accountRepository.save(account);
 
             // Img 조회 및 삭제
             List<Img> imgList = imgRepostiory.findByBlog_Id(blogId);
