@@ -1,5 +1,6 @@
 package individual.blog.users.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.entity.Account;
 import individual.blog.domain.entity.Blog;
@@ -8,25 +9,28 @@ import individual.blog.reponse.ResponseDto;
 import individual.blog.domain.repository.RoleRepository;
 import individual.blog.security.jwt.JwtUtil;
 import individual.blog.users.dto.InfoDto;
+import individual.blog.users.dto.MyProfileDto;
 import individual.blog.users.dto.SignInDto;
 import individual.blog.users.dto.SignUpDto;
 import individual.blog.domain.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Service
 @AllArgsConstructor
-@Log4j2
+@Slf4j
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
@@ -51,6 +55,7 @@ public class UserService {
             account.setEmail(signUpDto.getEmail());
             account.setName(signUpDto.getName());
             account.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+            account.setCreateAt(LocalDateTime.now());
             Set<Role> role = roleRepository.findByRoleNameIn(signUpDto.getRoles());
             account.setUserRoles(role);
             accountRepository.save(account);
@@ -91,19 +96,18 @@ public class UserService {
             String email = user.getUsername();
             Account account = accountRepository.findByEmail(email);
             Long id = account.getId();
-            List<Blog> blogList =blogRepository.findByAccount_Id(id);
-            List<Blog> blogLists = new ArrayList<>();
-            if(!blogList.isEmpty()){
-                for(Blog blogs : blogList){
-                    Blog blog = new Blog();
-                    blog.setId(blogs.getId());
-                    blog.setTitle(blogs.getTitle());
-                    blog.setContent(blogs.getContent());
-                    blog.setCreateAt(blogs.getCreateAt());
-                    blogLists.add(blog);
-                }
+            if(account == null ){
+                return ResponseDto.setFailed("500", "로그인 다시 진행해 주십시오.");
             }
-            return ResponseDto.setSuccess("200", "블로그 데이터", blogLists);
+            MyProfileDto myProfileDto = new MyProfileDto();
+            myProfileDto.setName(account.getName());
+            myProfileDto.setEmail(account.getEmail());
+            myProfileDto.setCreateAt(account.getCreateAt());
+            List<Blog> blogList = blogRepository.findByAccount_Id(id);
+            myProfileDto.setBlog(blogList);
+
+
+            return ResponseDto.setSuccess("200", "블로그 데이터", myProfileDto);
         }catch (Exception e){
             return ResponseDto.setFailed("500", "블로그 정보 불러오기 실패");
         }

@@ -32,11 +32,15 @@ public class BlogWriteService {
     @Transactional
     public ResponseDto<ResponseDto<BlogAddDto>> blogWirte(BlogAddDto blogAddDto, User user){
         try{
-
+            Account account = accountRepository.findByEmail(user.getUsername());
+            if(account==null){
+                return ResponseDto.setFailed("500", "다시 로그인 해주시기 바랍니다.");
+            }
             Blog blog = new Blog();
             blog.setTitle(blogAddDto.getTitle());
             blog.setContent(blogAddDto.getContent());
             blog.setCreateAt(LocalDateTime.now());
+            blog.setAccount(account);
             log.info("이미지 "+blogAddDto.getImgUrl());
             blogRepository.save(blog);
             if(blogAddDto.getImgUrl()!=null && !blogAddDto.getImgUrl().isEmpty() ){
@@ -49,15 +53,11 @@ public class BlogWriteService {
                 }
                 imgRepostiory.saveAll(imgList);
             }
-            Account account = accountRepository.findByEmail(user.getUsername());
-            Set<Blog> blogSet = new HashSet<>();
-            blogSet.add(blog);
-            account.setBlog(blogSet);
-            accountRepository.save(account);
+
             return ResponseDto.setSuccess("200", "글 작성 성공", null);
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseDto.setFailed("000", "글 작성 실패");
+            return ResponseDto.setFailed("500", "글 작성 실패");
         }
     }
 

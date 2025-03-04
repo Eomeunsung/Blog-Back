@@ -9,6 +9,7 @@ import individual.blog.domain.repository.ImgRepository;
 import individual.blog.reponse.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
@@ -24,7 +25,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class BlogDeleteService {
     private final BlogRepository blogRepository;
     private final ImgRepository imgRepostiory;
@@ -44,20 +45,11 @@ public class BlogDeleteService {
             Blog blog = blogRepository.findById(blogId)
                     .orElseThrow(() -> new IllegalArgumentException("Blog 못 찾음"));
 
-            Set<Account> ac = blog.getAccount();
-            for(Account account1 : ac ){
-                log.info("아이디 "+account1.getId());
+            Account ac = blog.getAccount();
+            if(ac==null){
+                ResponseDto responseDto = ResponseDto.setFailed("403", "권한이 없습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
             }
-
-            for( Account account1 : ac){
-                if(account1.getId() != account.getId()){
-                    ResponseDto responseDto = ResponseDto.setFailed("403", "권한이 없습니다.");
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
-                }
-            }
-            
-            account.getBlog().remove(blog);
-            accountRepository.save(account);
 
             // Img 조회 및 삭제
             List<Img> imgList = imgRepostiory.findByBlog_Id(blogId);

@@ -66,9 +66,9 @@ public class BlogController {
     }
 
     @PutMapping("")
-    public ResponseEntity<ResponseDto<Object>> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto){
+    public ResponseEntity<ResponseDto<Object>> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto, @AuthenticationPrincipal User user){
         log.info("블로그 아이이디 "+blogUpdateDto.getId());
-        ResponseDto<Object> responseDto = blogUpdateService.blogUpdate(blogUpdateDto);
+        ResponseDto<Object> responseDto = blogUpdateService.blogUpdate(blogUpdateDto, user);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
