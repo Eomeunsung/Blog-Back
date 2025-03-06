@@ -32,17 +32,13 @@ public class Blog implements Serializable {
 
     @Column
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createAt;
+    private LocalDate createAt;
 
     @ManyToOne
     @JoinColumn(name = "account_id")  // 이 외래 키 컬럼을 명시적으로 지정
     private Account account;
 
-    @PrePersist
-    public void prePersist() {
-        // 포맷팅된 날짜 설정 (초까지 포함)
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.createAt = LocalDateTime.now();  // 실제로 저장할 때 포맷팅된 값을 set
-    }
+    @OneToMany(mappedBy = "blog")
+    private Set<Comment> comments = new HashSet<>();
 
 }

@@ -1,6 +1,7 @@
 package individual.blog.users.controller;
 
 import individual.blog.reponse.ResponseDto;
+import individual.blog.users.dto.NameDto;
 import individual.blog.users.dto.SignInDto;
 import individual.blog.users.dto.SignUpDto;
 import individual.blog.users.service.UserService;
@@ -44,6 +45,16 @@ public class UserController {
     public ResponseEntity<ResponseDto<?>> myProfile(@AuthenticationPrincipal User user){
         ResponseDto responseDto = userService.myProfile(user);
         if(responseDto.getCode().equals("200")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/myprofile")
+    public ResponseEntity<ResponseDto<?>> myProfileUpdate(@RequestBody NameDto nameDto, @AuthenticationPrincipal User user){
+        ResponseDto responseDto = userService.myProfileUpdate(nameDto, user);
+        if(responseDto.getCode().equals("U200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);

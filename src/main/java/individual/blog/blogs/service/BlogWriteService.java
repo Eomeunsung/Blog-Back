@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,7 +40,7 @@ public class BlogWriteService {
             Blog blog = new Blog();
             blog.setTitle(blogAddDto.getTitle());
             blog.setContent(blogAddDto.getContent());
-            blog.setCreateAt(LocalDateTime.now());
+            blog.setCreateAt(LocalDate.now());
             blog.setAccount(account);
             log.info("이미지 "+blogAddDto.getImgUrl());
             blogRepository.save(blog);

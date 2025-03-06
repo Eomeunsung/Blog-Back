@@ -1,5 +1,7 @@
 package individual.blog.blogs.service;
 
+import individual.blog.domain.entity.Comment;
+import individual.blog.domain.repository.CommentRespository;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogDto;
@@ -9,17 +11,17 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 @Service
 public class BlogGetService {
     private final BlogRepository blogRepository;
+    private final CommentRespository commentRespository;
 
-    public BlogGetService(BlogRepository blogRepository) {
+    public BlogGetService(BlogRepository blogRepository, CommentRespository commentRespository) {
         this.blogRepository = blogRepository;
+        this.commentRespository = commentRespository;
     }
 
     @Transactional
@@ -38,7 +40,7 @@ public class BlogGetService {
                 blogDto.setTitle(blog.getTitle());
                 blogDto.setContent(blog.getContent());
 //                blogDto.setImgUrl();
-                blogDto.setLocalDate(blog.getCreateAt().toLocalDate());
+                blogDto.setLocalDate(blog.getCreateAt());
                 blogDtoList.add(blogDto);
             }
             return ResponseDto.setSuccess("200", "list 조회성공", blogDtoList);
@@ -54,9 +56,24 @@ public class BlogGetService {
             blogOptional.orElseThrow(()-> new IllegalArgumentException("상세 정보를 못 찾음"));
 //            Optional<Img> imgOptional = imgRepostiory.findByBlog_Id(id);
 //            imgOptional.orElseThrow(()-> new IllegalArgumentException("이미지가 없음"));
+            Blog blog = blogOptional.get();
             BlogDetailDto blogDetailDto = new BlogDetailDto();
-            blogDetailDto.setTitle(blogOptional.get().getTitle());
-            blogDetailDto.setContent(blogOptional.get().getContent());
+            blogDetailDto.setTitle(blog.getTitle());
+            blogDetailDto.setContent(blog.getContent());
+
+            if(!blog.getComments().isEmpty()){
+                Set<Comment> comments = new HashSet<>();
+                for(Comment comment : blog.getComments()){
+                    Comment com = new Comment();
+                    com.setId(comment.getId());
+                    com.setContent(comment.getContent());
+                    com.setCreatedAt(comment.getCreatedAt());
+                    com.setAccount(comment.getAccount());
+                    com.setBlog(comment.getBlog());
+                    comments.add(com);
+                }
+                blogDetailDto.setComments(comments);
+            }
 //            blogDetailDto.setImgUrl(imgOptional.get().getUrlImg());
             return ResponseDto.setSuccess("200", "상세 정보 조회 성공", blogDetailDto);
         } catch (Exception e){

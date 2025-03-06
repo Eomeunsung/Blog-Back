@@ -51,13 +51,21 @@ public class BlogController {
     @GetMapping("/{blogId}")
     public ResponseEntity<ResponseDto<BlogDetailDto>> blogDetail(@PathVariable Long blogId){
         ResponseDto<BlogDetailDto> responseDto = blogGetService.blogDetail(blogId);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        if(responseDto.getCode().equals("200")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/write")
     public ResponseEntity<ResponseDto<BlogAddDto>> blogWrite(@RequestBody BlogAddDto blogAddDto, @AuthenticationPrincipal User user){
         ResponseDto<BlogAddDto> responseDto = blogWriteService.blogWirte(blogAddDto, user).getData();
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        if(responseDto.getCode().equals("200")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/{blogId}")

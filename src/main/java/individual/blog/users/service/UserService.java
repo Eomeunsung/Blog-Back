@@ -8,10 +8,7 @@ import individual.blog.domain.entity.Role;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.domain.repository.RoleRepository;
 import individual.blog.security.jwt.JwtUtil;
-import individual.blog.users.dto.InfoDto;
-import individual.blog.users.dto.MyProfileDto;
-import individual.blog.users.dto.SignInDto;
-import individual.blog.users.dto.SignUpDto;
+import individual.blog.users.dto.*;
 import individual.blog.domain.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -23,7 +20,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class UserService {
             account.setEmail(signUpDto.getEmail());
             account.setName(signUpDto.getName());
             account.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
-            account.setCreateAt(LocalDateTime.now());
+            account.setCreateAt(LocalDate.now());
             Set<Role> role = roleRepository.findByRoleNameIn(signUpDto.getRoles());
             account.setUserRoles(role);
             accountRepository.save(account);
@@ -111,5 +110,21 @@ public class UserService {
         }catch (Exception e){
             return ResponseDto.setFailed("500", "블로그 정보 불러오기 실패");
         }
+    }
+
+    @Transactional
+    public ResponseDto<?> myProfileUpdate(NameDto nameDto, User user){
+        try{
+            Account account = accountRepository.findByEmail(user.getUsername());
+            if(account ==null){
+                return ResponseDto.setFailed("U000", "다시 로그인 해주시기 바랍니다.");
+            }
+            account.setName(nameDto.getName());
+            accountRepository.save(account);
+            return ResponseDto.setSuccess("U200", "닉네임 수정 완료");
+        }catch (Exception e){
+            return ResponseDto.setFailed("U001", "오류가 발생하였습니다. 다시 로그인해 주시기 바랍니다.");
+        }
+
     }
 }
