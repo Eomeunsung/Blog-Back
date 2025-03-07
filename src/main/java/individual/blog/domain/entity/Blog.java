@@ -1,6 +1,7 @@
 package individual.blog.domain.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -39,6 +40,7 @@ public class Blog implements Serializable {
     private Account account;
 
     @OneToMany(mappedBy = "blog")
+    @JsonIgnore  // 이 필드는 직렬화할 때 제외
     private Set<Comment> comments = new HashSet<>();
 
 }

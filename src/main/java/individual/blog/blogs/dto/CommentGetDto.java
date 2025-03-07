@@ -11,8 +11,9 @@ import java.time.LocalDate;
 @Setter
 public class CommentGetDto {
     Long id;
-    Account account;
-    Blog blog;
+    Long accountId;
+    String email;
+    String name;
     String content;
     LocalDate createAt;
 

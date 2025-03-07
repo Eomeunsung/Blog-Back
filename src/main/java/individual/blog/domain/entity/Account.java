@@ -48,10 +48,13 @@ public class Account implements Serializable {
     @ManyToMany(cascade={CascadeType.ALL})
     @JoinTable(name = "account_roles", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
             @JoinColumn(name = "role_id") })
-    @ToString.Exclude //무한 참조 방지
+    @JsonIgnore // 무한 참조 방지
+    @ToString.Exclude // 무한 참조 방지
     private Set<Role> userRoles = new HashSet<>();
 
     @OneToMany(mappedBy = "account")
+    @JsonIgnore // 무한 참조 방지
+    @ToString.Exclude // 무한 참조 방지
     private Set<Comment> comments = new HashSet<>();
 
 

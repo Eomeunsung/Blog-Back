@@ -29,6 +29,9 @@ public class Comment implements Serializable {
     @JoinColumn(name = "blog_id", nullable = false) // 외래 키 설정
     private Blog blog;
 
+    private String name;
+
+
     // 추가적인 내용, 예를 들어 댓글 내용, 작성일 등을 추가할 수 있습니다.
     @Column(nullable = false)
     private String content;

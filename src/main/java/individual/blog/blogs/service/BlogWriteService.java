@@ -57,7 +57,6 @@ public class BlogWriteService {
 
             return ResponseDto.setSuccess("200", "글 작성 성공", null);
         }catch (Exception e){
-            e.printStackTrace();
             return ResponseDto.setFailed("500", "글 작성 실패");
         }
     }

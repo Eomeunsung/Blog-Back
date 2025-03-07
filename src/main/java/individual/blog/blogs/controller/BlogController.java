@@ -60,7 +60,9 @@ public class BlogController {
 
     @PostMapping("/write")
     public ResponseEntity<ResponseDto<BlogAddDto>> blogWrite(@RequestBody BlogAddDto blogAddDto, @AuthenticationPrincipal User user){
-        ResponseDto<BlogAddDto> responseDto = blogWriteService.blogWirte(blogAddDto, user).getData();
+
+        log.info("쓰기 dto "+blogAddDto.getTitle()+" "+blogAddDto.getContent());
+        ResponseDto responseDto = blogWriteService.blogWirte(blogAddDto, user);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

@@ -11,6 +11,7 @@ import individual.blog.reponse.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CommentWriteService {
 
     private final AccountRepository accountRepository;
@@ -32,19 +34,22 @@ public class CommentWriteService {
         try{
             Account account = accountRepository.findByEmail(user.getUsername());
             if(account==null){
-                ResponseDto.setFailed("C000", "로그인 해주시기 바랍니다.");
+                return ResponseDto.setFailed("C000", "로그인 해주시기 바랍니다.");
             }
+
             Long blogId = commentWriteDto.getBlogId();
+            log.info("블로그 아이디 "+commentWriteDto.getBlogId()+" 내용 "+commentWriteDto.getContent());
 
             Optional<Blog> blogOptional = blogRepository.findById(blogId);
 
             if(blogOptional.isEmpty()){
-                ResponseDto.setFailed("C001", "블로그 정보가 없습니다.");
+                return ResponseDto.setFailed("C001", "블로그 정보가 없습니다.");
             }
             Blog blog = blogOptional.get();
 
             Comment comment = new Comment();
             comment.setAccount(account);
+            comment.setName(account.getName());
             comment.setBlog(blog);
             comment.setContent(commentWriteDto.getContent());
             comment.setCreatedAt(LocalDate.now());

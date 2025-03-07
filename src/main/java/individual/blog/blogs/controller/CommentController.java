@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +22,7 @@ public class CommentController {
 
     private final CommentWriteService commentWriteService;
     @PostMapping("/comment")
-    public ResponseEntity<ResponseDto<?>> commentWrite(CommentWriteDto commentWriteDto, @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseDto<?>> commentWrite(@RequestBody CommentWriteDto commentWriteDto, @AuthenticationPrincipal User user){
         ResponseDto responseDto = commentWriteService.commentWrite(commentWriteDto, user);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
