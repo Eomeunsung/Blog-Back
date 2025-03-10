@@ -9,10 +9,10 @@ import java.time.LocalDate;
 @Data
 @Getter
 @Setter
-public class BlogDto {
+public class BlogListDto {
     private Long id;
     private String title;
     private String content;
-    private String imgUrl;
     private LocalDate localDate;
+    private String userName;
 }

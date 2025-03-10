@@ -6,7 +6,7 @@ import individual.blog.domain.repository.AccountRepository;
 import individual.blog.domain.repository.CommentRespository;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogDetailDto;
-import individual.blog.blogs.dto.BlogDto;
+import individual.blog.blogs.dto.BlogListDto;
 import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.entity.Blog;
 import lombok.extern.log4j.Log4j2;
@@ -30,7 +30,7 @@ public class BlogGetService {
     }
 
     @Transactional
-    public ResponseDto<List<BlogDto>> blogList() {
+    public ResponseDto<List<BlogListDto>> blogList() {
      
         try {
             List<Blog> blogOptional = blogRepository.findAllBy();
@@ -38,17 +38,18 @@ public class BlogGetService {
             if (blogOptional == null) {
                 return ResponseDto.setFailed("000", "데이터 없음");
             }
-            List<BlogDto> blogDtoList = new ArrayList<>();
+            List<BlogListDto> blogListDtoList = new ArrayList<>();
             for (Blog blog : blogOptional) {
-                BlogDto blogDto = new BlogDto();
-                blogDto.setId(blog.getId());
-                blogDto.setTitle(blog.getTitle());
-                blogDto.setContent(blog.getContent());
+                BlogListDto blogListDto = new BlogListDto();
+                blogListDto.setId(blog.getId());
+                blogListDto.setTitle(blog.getTitle());
+                blogListDto.setContent(blog.getContent());
+                blogListDto.setUserName(blog.getAccount().getName());
 //                blogDto.setImgUrl();
-                blogDto.setLocalDate(blog.getCreateAt());
-                blogDtoList.add(blogDto);
+                blogListDto.setLocalDate(blog.getCreateAt());
+                blogListDtoList.add(blogListDto);
             }
-            return ResponseDto.setSuccess("200", "list 조회성공", blogDtoList);
+            return ResponseDto.setSuccess("200", "list 조회성공", blogListDtoList);
         } catch (Exception e) {
             return ResponseDto.setFailed("000", "데이터 없음");
         }
@@ -64,6 +65,7 @@ public class BlogGetService {
             Blog blog = blogOptional.get();
             log.info("블로그 디테일 "+blog.getContent());
             BlogDetailDto blogDetailDto = new BlogDetailDto();
+            blogDetailDto.setBlogId(blog.getId());
             blogDetailDto.setTitle(blog.getTitle());
             blogDetailDto.setContent(blog.getContent());
 
@@ -82,7 +84,6 @@ public class BlogGetService {
                 }
                 blogDetailDto.setComments(comments);
             }
-//            blogDetailDto.setImgUrl(imgOptional.get().getUrlImg());
             return ResponseDto.setSuccess("200", "상세 정보 조회 성공", blogDetailDto);
         } catch (Exception e){
             return ResponseDto.setFailed("000", "상세 정보 못 찾음");

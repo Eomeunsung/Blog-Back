@@ -1,6 +1,5 @@
 package individual.blog.users.service;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.entity.Account;
 import individual.blog.domain.entity.Blog;
@@ -12,7 +11,6 @@ import individual.blog.users.dto.*;
 import individual.blog.domain.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -98,15 +94,24 @@ public class UserService {
             if(account == null ){
                 return ResponseDto.setFailed("500", "로그인 다시 진행해 주십시오.");
             }
-            MyProfileDto myProfileDto = new MyProfileDto();
-            myProfileDto.setName(account.getName());
-            myProfileDto.setEmail(account.getEmail());
-            myProfileDto.setCreateAt(account.getCreateAt());
+            ProfileDto profileDto = new ProfileDto();
+            profileDto.setName(account.getName());
+            profileDto.setEmail(account.getEmail());
+            profileDto.setCreateAt(account.getCreateAt());
             List<Blog> blogList = blogRepository.findByAccount_Id(id);
-            myProfileDto.setBlog(blogList);
+            List<ProfileBlogDto> profileBlogDtoList = new ArrayList<>();
+            if(!blogList.isEmpty()){
+                for(Blog blog : blogList){
+                    ProfileBlogDto profileBlogDto = new ProfileBlogDto();
+                    profileBlogDto.setId(blog.getId());
+                    profileBlogDto.setTitle(blog.getTitle());
+                    profileBlogDto.setCreateAt(blog.getCreateAt());
+                    profileBlogDtoList.add(profileBlogDto);
+                }
+                profileDto.setBlogData(profileBlogDtoList);
+            }
 
-
-            return ResponseDto.setSuccess("200", "블로그 데이터", myProfileDto);
+            return ResponseDto.setSuccess("200", "블로그 데이터", profileDto);
         }catch (Exception e){
             return ResponseDto.setFailed("500", "블로그 정보 불러오기 실패");
         }

@@ -39,7 +39,7 @@ public class Blog implements Serializable {
     @JoinColumn(name = "account_id")  // 이 외래 키 컬럼을 명시적으로 지정
     private Account account;
 
-    @OneToMany(mappedBy = "blog")
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
     @JsonIgnore  // 이 필드는 직렬화할 때 제외
     private Set<Comment> comments = new HashSet<>();
 

@@ -1,6 +1,5 @@
 package individual.blog.users.dto;
 
-import individual.blog.domain.entity.Blog;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,12 +10,11 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-public class MyProfileDto {
+public class ProfileDto {
     private String email;
     private String name;
     private LocalDate createAt;
-
-    private List<Blog> blog;
+    private List<ProfileBlogDto> blogData;
 
 
 }

@@ -1,10 +1,9 @@
 package individual.blog.blogs.controller;
 
-import individual.blog.domain.entity.Account;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogAddDto;
 import individual.blog.blogs.dto.BlogDetailDto;
-import individual.blog.blogs.dto.BlogDto;
+import individual.blog.blogs.dto.BlogListDto;
 import individual.blog.blogs.dto.BlogUpdateDto;
 import individual.blog.blogs.service.BlogDeleteService;
 import individual.blog.blogs.service.BlogGetService;
@@ -43,8 +42,8 @@ public class BlogController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<ResponseDto<List<BlogDto>>> blogGetAllList(){
-        ResponseDto<List<BlogDto>> responseDto = blogGetService.blogList();
+    public ResponseEntity<ResponseDto<List<BlogListDto>>> blogGetAllList(){
+        ResponseDto<List<BlogListDto>> responseDto = blogGetService.blogList();
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 

@@ -9,9 +9,8 @@ import java.util.Set;
 @Getter
 @Setter
 public class BlogDetailDto {
-    private Long accountId;
+    private Long blogId;
     private String title;
     private String content;
-    private String imgUrl;
     private Set<CommentGetDto> comments;
 }
