@@ -20,7 +20,7 @@ public class FriendController {
     @GetMapping("/friend")
     public ResponseEntity<ResponseDto<?>> friendsGet(@AuthenticationPrincipal User user){
         ResponseDto responseDto = friendService.friendGet(user);
-        if(responseDto.getCode().equals("F200")){
+        if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
@@ -63,6 +63,27 @@ public class FriendController {
     @GetMapping("/friendProfile/{id}")
     public ResponseEntity<ResponseDto<?>> friendProfile(@PathVariable Long id){
         ResponseDto responseDto = friendService.friendProfile(id);
+        if(responseDto.getCode().equals("200")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/friendRequest")
+    public ResponseEntity<ResponseDto<?>> friendRequest(@AuthenticationPrincipal User user){
+        ResponseDto responseDto = friendService.friendRequest(user);
+        if(responseDto.getCode().equals("200")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/friendAccept/{id}")
+    public ResponseEntity<ResponseDto<?>> firendAccept(@PathVariable Long id, @AuthenticationPrincipal User user){
+        log.info("들어온 아이디 "+id+" 유저 "+user.getUsername());
+        ResponseDto responseDto = friendService.friendAccept(id, user);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

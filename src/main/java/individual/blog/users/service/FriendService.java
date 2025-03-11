@@ -7,9 +7,7 @@ import individual.blog.domain.enums.FriendStatus;
 import individual.blog.domain.repository.AccountRepository;
 import individual.blog.domain.repository.FriendRepository;
 import individual.blog.reponse.ResponseDto;
-import individual.blog.users.dto.AccountGetDto;
-import individual.blog.users.dto.ProfileBlogDto;
-import individual.blog.users.dto.ProfileDto;
+import individual.blog.users.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +32,29 @@ public class FriendService {
         try{
             Account account = accountRepository.findByEmail(user.getUsername());
             if(account == null){
-                return ResponseDto.setFailed("F001", "없는 유저 입니다. 다시 로그인 해주시기 바랍니다.");
+                return ResponseDto.setFailed("001", "없는 유저 입니다. 다시 로그인 해주시기 바랍니다.");
             }
 
-            List<Friend> friendsList = friendRepository.findByAccount_Id(account.getId());
-            return ResponseDto.setSuccess("F200", "친구 목록 조회 성공", friendsList);
+            List<Friend> friendsList = friendRepository.findByAccount_IdOrFriend_IdAndStatus(account.getId(), account.getId(), FriendStatus.ACCEPTED);
+            List<FriendGetDto> friendGetDtoList = new ArrayList<>();
+            if(!friendsList.isEmpty()){
+                for(Friend friend : friendsList){
+                    FriendGetDto friendGetDto = new FriendGetDto();
+
+                    if(friend.getFriend().getId() == account.getId()){
+                        friendGetDto.setId(friend.getAccount().getId());
+                        friendGetDto.setName(friend.getAccount().getName());
+                    }else{
+                        friendGetDto.setId(friend.getFriend().getId());
+                        friendGetDto.setName(friend.getFriend().getName());
+                    }
+                    friendGetDtoList.add(friendGetDto);
+                }
+            }
+
+            return ResponseDto.setSuccess("200", "친구 목록 조회 성공", friendGetDtoList);
         }catch (Exception e){
-            return ResponseDto.setFailed("F002", "오류가 발생했습니다.");
+            return ResponseDto.setFailed("002", "오류가 발생했습니다.");
         }
     }
 
@@ -65,6 +79,7 @@ public class FriendService {
         }
     }
 
+    //추천 친구 목록
     @Transactional
     public ResponseDto<?> search(User user){
         try{
@@ -74,6 +89,13 @@ public class FriendService {
             if(!accountList.isEmpty()){
                 for(Account account : accountList){
                     if(account.getId() == accountId.getId()){
+                        continue;
+                    }
+                    Friend friend = friendRepository.findByAccount_IdAndFriend_Id(accountId.getId(), account.getId());
+                    Friend friend2 = friendRepository.findByAccount_IdAndFriend_Id(account.getId(), accountId.getId());
+
+                    if ((friend != null && friend.getStatus().equals(FriendStatus.ACCEPTED)) ||
+                            (friend2 != null && friend2.getStatus().equals(FriendStatus.ACCEPTED))) {
                         continue;
                     }
                     AccountGetDto accountGetDto = new AccountGetDto();
@@ -89,6 +111,7 @@ public class FriendService {
         }
     }
 
+    //친구 요청 보내기
     @Transactional
     public ResponseDto<?> friendAdd(Long id, User user){
         log.info("들어온 친추 "+id+" "+user.getUsername());
@@ -145,5 +168,58 @@ public class FriendService {
         }catch (Exception e){
             return ResponseDto.setFailed("002","알 수 없는 오류가 발생하였습니다.");
         }
+    }
+
+    //요청 받은 친구 목록
+    @Transactional
+    public ResponseDto<?> friendRequest(User user){
+        try{
+            Account account = accountRepository.findByEmail(user.getUsername());
+            if(account==null){
+                return ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 바랍니다.");
+            }
+            List<Friend> friendList = friendRepository.findByFriend_Id(account.getId());
+
+            if(friendList.isEmpty()){
+                return ResponseDto.setFailed("002", "친구 요청 없음");
+            }
+            List<FriendRequestDto> friendRequestDtos = new ArrayList<>();
+            for(Friend friend : friendList) {
+                if(friend.getStatus().equals(FriendStatus.PENDING)){
+                    FriendRequestDto friendRequestDto = new FriendRequestDto();
+                    friendRequestDto.setAccountId(friend.getFriend().getId());
+                    friendRequestDto.setFriendId(friend.getAccount().getId());
+                    friendRequestDto.setAccountName(friend.getFriend().getName());
+                    friendRequestDto.setFriendName(friend.getAccount().getName());
+                    friendRequestDtos.add(friendRequestDto);
+                }
+            }
+            return ResponseDto.setSuccess("200", "친구 요청 데이터", friendRequestDtos);
+        }catch (Exception e){
+            return ResponseDto.setFailed("003", "알 수 없는 오류 발생");
+        }
+    }
+
+    //친구 요청 수락
+    @Transactional
+    public ResponseDto<?> friendAccept(Long id, User user){
+      try{
+          Account account = accountRepository.findByEmail(user.getUsername());
+          if(account==null){
+              return ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 바랍니다.");
+          }
+
+          Friend friend = friendRepository.findByAccount_IdAndFriend_Id(id, account.getId());
+          if(friend==null){
+              return ResponseDto.setFailed("002", "친구 요청이 오류 났습니다.");
+          }
+          friend.setStatus(FriendStatus.ACCEPTED);
+
+          friendRepository.save(friend);
+          return ResponseDto.setSuccess("200", "친구 요청 수락 완료",null);
+      }catch (Exception e){
+          return ResponseDto.setFailed("003", "알 수 없는 오류 발생");
+      }
+
     }
 }
