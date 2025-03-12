@@ -17,11 +17,11 @@ public class Friend implements Serializable {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne
     @JoinColumn(name="account_id", nullable = false)
     private Account account;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne
     @JoinColumn(name = "friend_id", nullable = false)
     private Account friend;
 

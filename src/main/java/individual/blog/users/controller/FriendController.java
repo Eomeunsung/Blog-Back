@@ -81,9 +81,19 @@ public class FriendController {
     }
 
     @PostMapping("/friendAccept/{id}")
-    public ResponseEntity<ResponseDto<?>> firendAccept(@PathVariable Long id, @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseDto<?>> friendAccept(@PathVariable Long id, @AuthenticationPrincipal User user){
         log.info("들어온 아이디 "+id+" 유저 "+user.getUsername());
         ResponseDto responseDto = friendService.friendAccept(id, user);
+        if(responseDto.getCode().equals("200")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("friendDelete/{id}")
+    public ResponseEntity<ResponseDto<?>> friendDelete(@PathVariable Long id, @AuthenticationPrincipal User user){
+        ResponseDto responseDto = friendService.friendDelete(id, user);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

@@ -6,13 +6,11 @@ import individual.blog.domain.entity.Blog;
 import individual.blog.domain.entity.Comment;
 import individual.blog.domain.repository.AccountRepository;
 import individual.blog.domain.repository.BlogRepository;
-import individual.blog.domain.repository.CommentRespository;
+import individual.blog.domain.repository.CommentRepository;
 import individual.blog.reponse.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +24,7 @@ public class CommentWriteService {
 
     private final AccountRepository accountRepository;
 
-    private final CommentRespository commentRespository;
+    private final CommentRepository commentRepository;
 
     private final BlogRepository blogRepository;
     @Transactional
@@ -53,7 +51,7 @@ public class CommentWriteService {
             comment.setBlog(blog);
             comment.setContent(commentWriteDto.getContent());
             comment.setCreatedAt(LocalDate.now());
-            commentRespository.save(comment);
+            commentRepository.save(comment);
             return ResponseDto.setSuccess("200", "댓글 작성 성공");
         }catch (Exception e){
             return ResponseDto.setFailed("C002", "알 수 없는 오류가 발생했습니다.");

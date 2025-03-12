@@ -3,7 +3,7 @@ package individual.blog.blogs.service;
 import individual.blog.blogs.dto.CommentGetDto;
 import individual.blog.domain.entity.Comment;
 import individual.blog.domain.repository.AccountRepository;
-import individual.blog.domain.repository.CommentRespository;
+import individual.blog.domain.repository.CommentRepository;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogListDto;
@@ -19,13 +19,13 @@ import java.util.*;
 @Service
 public class BlogGetService {
     private final BlogRepository blogRepository;
-    private final CommentRespository commentRespository;
+    private final CommentRepository commentRepository;
 
     private final AccountRepository accountRepository;
 
-    public BlogGetService(BlogRepository blogRepository, CommentRespository commentRespository, AccountRepository accountRepository) {
+    public BlogGetService(BlogRepository blogRepository, CommentRepository commentRepository, AccountRepository accountRepository) {
         this.blogRepository = blogRepository;
-        this.commentRespository = commentRespository;
+        this.commentRepository = commentRepository;
         this.accountRepository = accountRepository;
     }
 

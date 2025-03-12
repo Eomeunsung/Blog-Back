@@ -41,12 +41,15 @@ public class FriendService {
                 for(Friend friend : friendsList){
                     FriendGetDto friendGetDto = new FriendGetDto();
 
-                    if(friend.getFriend().getId() == account.getId()){
+                    if(friend.getFriend().getId() == account.getId() && friend.getStatus().equals(FriendStatus.ACCEPTED)){
                         friendGetDto.setId(friend.getAccount().getId());
                         friendGetDto.setName(friend.getAccount().getName());
                     }else{
-                        friendGetDto.setId(friend.getFriend().getId());
-                        friendGetDto.setName(friend.getFriend().getName());
+                        if(friend.getStatus().equals(FriendStatus.ACCEPTED)){
+                            friendGetDto.setId(friend.getFriend().getId());
+                            friendGetDto.setName(friend.getFriend().getName());
+                        }
+
                     }
                     friendGetDtoList.add(friendGetDto);
                 }
@@ -85,7 +88,7 @@ public class FriendService {
         try{
             Account accountId = accountRepository.findByEmail(user.getUsername());
             List<Account> accountList = accountRepository.findAllBy();
-            List<AccountGetDto> accountGetDtoList = new ArrayList<>();
+            List<FriendListGetDto> friendListGetDtoList = new ArrayList<>();
             if(!accountList.isEmpty()){
                 for(Account account : accountList){
                     if(account.getId() == accountId.getId()){
@@ -98,14 +101,23 @@ public class FriendService {
                             (friend2 != null && friend2.getStatus().equals(FriendStatus.ACCEPTED))) {
                         continue;
                     }
-                    AccountGetDto accountGetDto = new AccountGetDto();
-                    accountGetDto.setId(account.getId());
-                    accountGetDto.setEmail(account.getEmail());
-                    accountGetDto.setName(account.getName());
-                    accountGetDtoList.add(accountGetDto);
+                    FriendListGetDto friendListGetDto = new FriendListGetDto();
+                    friendListGetDto.setId(account.getId());
+                    friendListGetDto.setEmail(account.getEmail());
+                    friendListGetDto.setName(account.getName());
+                    if(friend!=null){
+                        if(friend.getStatus().equals(FriendStatus.PENDING)){
+                            friendListGetDto.setStatus("PENDING");
+                        }
+                    }else if(friend2 !=null){
+                        if(friend2.getStatus().equals(FriendStatus.PENDING)){
+                            friendListGetDto.setStatus("PENDING");
+                        }
+                    }
+                    friendListGetDtoList.add(friendListGetDto);
                 }
             }
-            return ResponseDto.setSuccess("200", "조회 성공", accountGetDtoList);
+            return ResponseDto.setSuccess("200", "조회 성공", friendListGetDtoList);
         }catch (Exception e) {
             return ResponseDto.setFailed("F001", "조회 실패");
         }
@@ -114,7 +126,6 @@ public class FriendService {
     //친구 요청 보내기
     @Transactional
     public ResponseDto<?> friendAdd(Long id, User user){
-        log.info("들어온 친추 "+id+" "+user.getUsername());
         try{
             Account account = accountRepository.findByEmail(user.getUsername());
 
@@ -221,5 +232,29 @@ public class FriendService {
           return ResponseDto.setFailed("003", "알 수 없는 오류 발생");
       }
 
+    }
+
+    @Transactional
+    public ResponseDto<?> friendDelete(Long id, User user){
+        try{
+            Account account = accountRepository.findByEmail(user.getUsername());
+            if(account==null){
+                return ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 바랍니다.");
+            }
+
+            Friend friend = friendRepository.findByAccount_IdAndFriend_Id(id, account.getId());
+            Friend friend2 = friendRepository.findByAccount_IdAndFriend_Id(account.getId(), id);
+
+            if(friend!=null && friend.getStatus().equals(FriendStatus.ACCEPTED)){
+                friendRepository.delete(friend);
+                return ResponseDto.setSuccess("200", "친구 삭제 성공");
+            }else if(friend2!=null && friend2.getStatus().equals(FriendStatus.ACCEPTED)){
+                friendRepository.delete(friend2);
+                return ResponseDto.setSuccess("200", "친구 삭제 성공");
+            }
+            return ResponseDto.setFailed("002", "친구 삭제 오류 발생했습니다.");
+        }catch (Exception e){
+            return ResponseDto.setFailed("003", "알 수 없는 오류 발생");
+        }
     }
 }
