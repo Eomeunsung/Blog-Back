@@ -1,20 +1,26 @@
 package individual.blog.websocket.chat.controller;
 
+import individual.blog.domain.entity.Account;
+import individual.blog.domain.repository.AccountRepository;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.websocket.chat.service.ChatService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/chat")
 @AllArgsConstructor
+@Slf4j
 public class ChatController {
+    private final AccountRepository accountRepository;
 
     private final ChatService chatService;
 
@@ -26,5 +32,42 @@ public class ChatController {
         }else{
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/create/private/{id}")
+    private ResponseEntity<ResponseDto<?>> chatPrivateCreate(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+        log.info("채팅방 생성 "+userDetails.getUsername()+" "+id);
+        if(userDetails.getUsername()==null){
+            ResponseDto responseDto = ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 해주시기 바랍니다.");
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+
+        if(id==null){
+            ResponseDto responseDto = ResponseDto.setFailed("002", "상대방이 없습니다.");
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+        ResponseDto responseDto = chatService.chatCreate(id, userDetails);
+        if (responseDto.getCode().equals("200") || responseDto.getCode().equals("201")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/get/{accountId}")
+    private ResponseEntity<ResponseDto<?>> chatGet(@PathVariable Long accountId, @AuthenticationPrincipal UserDetails userDetails){
+        if (userDetails==null){
+            ResponseDto responseDto = ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 해주시기 바랍니다.");
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+        Account account = accountRepository.findByEmail(userDetails.getUsername());
+
+        ResponseDto responseDto = chatService.chatPrivateGet(accountId, account.getId());
+        if (responseDto.getCode().equals("200") || responseDto.getCode().equals("001")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+
     }
 }

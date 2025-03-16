@@ -78,6 +78,7 @@ public class UserService {
             final String jwt = jwtUtil.createToken(userDetails);
             InfoDto infoDto = new InfoDto();
             infoDto.setName(account.getName());
+            infoDto.setEmail(email);
             infoDto.setJwt(jwt);
             return ResponseDto.setSuccess("200","로그인 성공", infoDto);
         }catch (Exception e){

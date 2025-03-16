@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class InfoDto {
     String name;
+    String email;
     String jwt;
 }

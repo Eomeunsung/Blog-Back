@@ -23,5 +23,8 @@ public class ChatMessage {
     private Account account;
 
     @Column
+    private String content;
+
+    @Column
     private LocalDate createAt;
 }

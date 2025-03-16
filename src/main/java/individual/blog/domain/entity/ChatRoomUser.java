@@ -1,10 +1,9 @@
 package individual.blog.domain.entity;
 
+import individual.blog.domain.enums.ChatType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -23,6 +22,7 @@ public class ChatRoomUser {
     @JoinColumn(name="chatRoom_id", nullable = false)
     private ChatRoom chatRoom;
 
-    @Column
-    private LocalDate createAt;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ChatType type;
 }

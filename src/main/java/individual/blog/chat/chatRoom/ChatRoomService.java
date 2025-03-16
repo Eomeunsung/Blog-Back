@@ -1,7 +1,7 @@
 package individual.blog.chat.chatRoom;
 
 import individual.blog.chat.dto.ChatRoomDto;
-import individual.blog.websocket.dto.ChatRoom;
+//import individual.blog.websocket.dto.ChatRoom;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
