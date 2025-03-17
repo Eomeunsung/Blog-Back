@@ -68,6 +68,20 @@ public class ChatController {
         }else{
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
+    }
 
+    @GetMapping("/msg/{id}")
+    public ResponseEntity<ResponseDto<?>> chatMessageGet(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+        if (userDetails==null){
+            ResponseDto responseDto = ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 해주시기 바랍니다.");
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+
+        ResponseDto responseDto = chatService.chatMessageGet(id);
+        if (responseDto.getCode().equals("200") || responseDto.getCode().equals("001")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
     }
 }

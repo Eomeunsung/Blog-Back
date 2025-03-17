@@ -110,6 +110,7 @@ public class ChatService {
         }
     }
 
+    //유저 id로 채팅방 찾기
     @Transactional
     public ResponseDto<?> chatPrivateGet(Long accountId, Long accountId2){
         try{
@@ -158,8 +159,40 @@ public class ChatService {
         }catch (Exception e){
             return ResponseDto.setFailed("002", "알 수 없는 오류 발생");
         }
-
-
     }
+
+    //방 id로 채팅방 찾기
+    @Transactional
+    public ResponseDto<?> chatMessageGet(Long id){
+        try{
+            Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(id);
+            if(chatRoomOptional.isEmpty()){
+                return ResponseDto.setFailed("001", "채팅방이 없습니다.");
+            }
+            ChatRoom chatRoom = chatRoomOptional.get();
+            List<ChatMessage> chatMessageList = chatMessageRepository.findByChatRoom_Id(chatRoom.getId());
+            ChatGetDto chatGetDto = new ChatGetDto();
+            chatGetDto.setRoomId(chatRoom.getId());
+
+            if (!chatMessageList.isEmpty()){
+                List<ChatMessageGetDto> chatMessageGetDtoList = new ArrayList<>();
+                for(ChatMessage chatMessage : chatMessageList){
+                    ChatMessageGetDto chatMessageGetDto = new ChatMessageGetDto();
+                    chatMessageGetDto.setCreateAt(chatMessage.getCreateAt());
+                    chatMessageGetDto.setEmail(chatMessage.getAccount().getEmail());
+                    chatMessageGetDto.setContent(chatMessage.getContent());
+                    chatMessageGetDto.setName(chatMessage.getAccount().getName());
+                    chatMessageGetDto.setId(chatMessage.getId());
+                    chatMessageGetDto.setChatRoom(chatMessage.getChatRoom());
+                    chatMessageGetDtoList.add(chatMessageGetDto);
+                }
+                chatGetDto.setChatMessageGetDtoList(chatMessageGetDtoList);
+            }
+            return ResponseDto.setSuccess("200", "채팅방 가져오기 성공", chatGetDto);
+        }catch (Exception e){
+            return ResponseDto.setFailed("002", "알 수 없는 오류 발생");
+        }
+    }
+
 
 }

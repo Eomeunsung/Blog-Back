@@ -1,7 +1,5 @@
 package individual.blog.websocket.chat.dto;
 
-import individual.blog.domain.entity.ChatMessage;
-import individual.blog.domain.enums.ChatType;
 import lombok.Getter;
 import lombok.Setter;
 
