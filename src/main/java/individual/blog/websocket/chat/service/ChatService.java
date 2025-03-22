@@ -1,5 +1,6 @@
 package individual.blog.websocket.chat.service;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import individual.blog.domain.entity.Account;
 import individual.blog.domain.entity.ChatMessage;
 import individual.blog.domain.entity.ChatRoom;
@@ -10,9 +11,7 @@ import individual.blog.domain.repository.ChatMessageRepository;
 import individual.blog.domain.repository.ChatRoomRepository;
 import individual.blog.domain.repository.ChatRoomUserRepository;
 import individual.blog.reponse.ResponseDto;
-import individual.blog.websocket.chat.dto.ChatGetDto;
-import individual.blog.websocket.chat.dto.ChatMessageGetDto;
-import individual.blog.websocket.chat.dto.ChatRoomListDto;
+import individual.blog.websocket.chat.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalLong;
 
 @Service
 @AllArgsConstructor
@@ -69,7 +67,7 @@ public class ChatService {
     }
 
     @Transactional
-    public ResponseDto<?> chatCreate(Long id, UserDetails userDetails){
+    public ResponseDto<?> chatPrivateCreate(Long id, UserDetails userDetails){
         try{
             Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account == null){
@@ -189,6 +187,51 @@ public class ChatService {
                 chatGetDto.setChatMessageGetDtoList(chatMessageGetDtoList);
             }
             return ResponseDto.setSuccess("200", "채팅방 가져오기 성공", chatGetDto);
+        }catch (Exception e){
+            return ResponseDto.setFailed("002", "알 수 없는 오류 발생");
+        }
+    }
+
+    @Transactional
+    public ResponseDto<?> createGroupChat(ChatGroupCreateDto chatGroupCreateDto, UserDetails userDetails){
+        try{
+
+            Account caption = accountRepository.findByEmail(userDetails.getUsername());
+            if(caption==null){
+                return ResponseDto.setFailed("001", "유저 정보가 없습니다. 다시 로그인 해주시기 바랍니다.");
+            }
+
+            List<Account> member = new ArrayList<>();
+            for(ChatUserIdDto chatUserIdDto : chatGroupCreateDto.getChatUserIdDtoList()){
+                Optional<Account> accountOptional = accountRepository.findById(chatUserIdDto.getUserId());
+                if(accountOptional.isEmpty()){
+                    continue;
+                }
+                Account account = accountOptional.get();
+                member.add(account);
+            }
+            ChatRoom chatRoom = new ChatRoom();
+            chatRoom.setName(chatGroupCreateDto.getGroupName());
+            chatRoom.setLocalDate(LocalDate.now());
+            chatRoomRepository.save(chatRoom);
+
+
+
+            for(Account account : member){
+                ChatRoomUser chatRoomUser = new ChatRoomUser();
+                chatRoomUser.setType(ChatType.GROUP);
+                chatRoomUser.setAccount(account);
+                chatRoomUser.setChatRoom(chatRoom);
+                chatRoomUserRepository.save(chatRoomUser);
+            }
+            ChatRoomUser chatRoomUser = new ChatRoomUser();
+            chatRoomUser.setType(ChatType.GROUP);
+            chatRoomUser.setAccount(caption);
+            chatRoomUser.setChatRoom(chatRoom);
+            chatRoomUserRepository.save(chatRoomUser);
+
+
+            return ResponseDto.setSuccess("200", "단톡방 생성 성공", chatRoom.getId());
         }catch (Exception e){
             return ResponseDto.setFailed("002", "알 수 없는 오류 발생");
         }

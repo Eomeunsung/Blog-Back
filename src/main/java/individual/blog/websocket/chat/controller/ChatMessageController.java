@@ -41,7 +41,7 @@ public class ChatMessageController {
         String destination = "/topic/chat/"+roomId;
         log.info("보낼 주소 "+destination);
         chatMessageDto.setType(MessageTypeEnum.CHAT);
-        chatMessageDto.setLocalDate(LocalDate.now());
+        chatMessageDto.setCreateAt(LocalDate.now());
         chatWriteService.chatWriteService(chatMessageDto, roomId);
         messagingTemplate.convertAndSend(destination, chatMessageDto);
 

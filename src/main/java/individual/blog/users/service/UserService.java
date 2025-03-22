@@ -87,9 +87,9 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<?> myProfile(User user){
+    public ResponseDto<?> myProfile(UserDetails userDetails){
         try{
-            String email = user.getUsername();
+            String email = userDetails.getUsername();
             Account account = accountRepository.findByEmail(email);
             Long id = account.getId();
             if(account == null ){

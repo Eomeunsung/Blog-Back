@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,8 +19,8 @@ public class FriendController {
     private final FriendService friendService;
 
     @GetMapping("/friend")
-    public ResponseEntity<ResponseDto<?>> friendsGet(@AuthenticationPrincipal User user){
-        ResponseDto responseDto = friendService.friendGet(user);
+    public ResponseEntity<ResponseDto<?>> friendsGet(@AuthenticationPrincipal UserDetails userDetails){
+        ResponseDto responseDto = friendService.friendGet(userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
@@ -40,8 +41,8 @@ public class FriendController {
 
     //친구 추천 조회
     @GetMapping("/search")
-    public ResponseEntity<ResponseDto<?>> search(@AuthenticationPrincipal User user){
-        ResponseDto responseDto = friendService.search(user);
+    public ResponseEntity<ResponseDto<?>> search(@AuthenticationPrincipal UserDetails userDetails){
+        ResponseDto responseDto = friendService.search(userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
@@ -50,9 +51,9 @@ public class FriendController {
     }
 
     @PostMapping("friendAdd/{id}")
-    public ResponseEntity<ResponseDto<?>> friendAdd(@PathVariable Long id, @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseDto<?>> friendAdd(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
         log.info("들어온 친구 추가 "+id);
-        ResponseDto responseDto = friendService.friendAdd(id, user);
+        ResponseDto responseDto = friendService.friendAdd(id, userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
@@ -71,8 +72,8 @@ public class FriendController {
     }
 
     @GetMapping("/friendRequest")
-    public ResponseEntity<ResponseDto<?>> friendRequest(@AuthenticationPrincipal User user){
-        ResponseDto responseDto = friendService.friendRequest(user);
+    public ResponseEntity<ResponseDto<?>> friendRequest(@AuthenticationPrincipal UserDetails userDetails){
+        ResponseDto responseDto = friendService.friendRequest(userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
@@ -81,9 +82,9 @@ public class FriendController {
     }
 
     @PostMapping("/friendAccept/{id}")
-    public ResponseEntity<ResponseDto<?>> friendAccept(@PathVariable Long id, @AuthenticationPrincipal User user){
-        log.info("들어온 아이디 "+id+" 유저 "+user.getUsername());
-        ResponseDto responseDto = friendService.friendAccept(id, user);
+    public ResponseEntity<ResponseDto<?>> friendAccept(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+        log.info("들어온 아이디 "+id+" 유저 "+userDetails.getUsername());
+        ResponseDto responseDto = friendService.friendAccept(id, userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
@@ -92,8 +93,8 @@ public class FriendController {
     }
 
     @PostMapping("friendDelete/{id}")
-    public ResponseEntity<ResponseDto<?>> friendDelete(@PathVariable Long id, @AuthenticationPrincipal User user){
-        ResponseDto responseDto = friendService.friendDelete(id, user);
+    public ResponseEntity<ResponseDto<?>> friendDelete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+        ResponseDto responseDto = friendService.friendDelete(id, userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

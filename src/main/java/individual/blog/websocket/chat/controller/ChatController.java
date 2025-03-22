@@ -3,6 +3,7 @@ package individual.blog.websocket.chat.controller;
 import individual.blog.domain.entity.Account;
 import individual.blog.domain.repository.AccountRepository;
 import individual.blog.reponse.ResponseDto;
+import individual.blog.websocket.chat.dto.ChatGroupCreateDto;
 import individual.blog.websocket.chat.service.ChatService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/chat")
@@ -46,7 +44,7 @@ public class ChatController {
             ResponseDto responseDto = ResponseDto.setFailed("002", "상대방이 없습니다.");
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
-        ResponseDto responseDto = chatService.chatCreate(id, userDetails);
+        ResponseDto responseDto = chatService.chatPrivateCreate(id, userDetails);
         if (responseDto.getCode().equals("200") || responseDto.getCode().equals("201")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
@@ -78,6 +76,17 @@ public class ChatController {
         }
 
         ResponseDto responseDto = chatService.chatMessageGet(id);
+        if (responseDto.getCode().equals("200") || responseDto.getCode().equals("001")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/create/group")
+    public ResponseEntity<ResponseDto<?>> chatGroupCreate(@RequestBody ChatGroupCreateDto chatGroupCreateDto, @AuthenticationPrincipal UserDetails userDetails){
+        log.info("들어온 그룹 이름 "+chatGroupCreateDto.getGroupName()+" "+chatGroupCreateDto.getChatUserIdDtoList());
+        ResponseDto responseDto = chatService.createGroupChat(chatGroupCreateDto, userDetails);
         if (responseDto.getCode().equals("200") || responseDto.getCode().equals("001")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

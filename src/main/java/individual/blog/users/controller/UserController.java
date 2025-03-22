@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,8 +43,8 @@ public class UserController {
     }
 
     @GetMapping("/myprofile")
-    public ResponseEntity<ResponseDto<?>> myProfile(@AuthenticationPrincipal User user){
-        ResponseDto responseDto = userService.myProfile(user);
+    public ResponseEntity<ResponseDto<?>> myProfile(@AuthenticationPrincipal UserDetails userDetails){
+        ResponseDto responseDto = userService.myProfile(userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

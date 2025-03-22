@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,9 +29,9 @@ public class FriendService {
     private final FriendRepository friendRepository;
 
     @Transactional
-    public ResponseDto<?> friendGet(User user){
+    public ResponseDto<?> friendGet(UserDetails userDetails){
         try{
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account == null){
                 return ResponseDto.setFailed("001", "없는 유저 입니다. 다시 로그인 해주시기 바랍니다.");
             }
@@ -84,9 +85,9 @@ public class FriendService {
 
     //추천 친구 목록
     @Transactional
-    public ResponseDto<?> search(User user){
+    public ResponseDto<?> search(UserDetails userDetails){
         try{
-            Account accountId = accountRepository.findByEmail(user.getUsername());
+            Account accountId = accountRepository.findByEmail(userDetails.getUsername());
             List<Account> accountList = accountRepository.findAllBy();
             List<FriendListGetDto> friendListGetDtoList = new ArrayList<>();
             if(!accountList.isEmpty()){
@@ -125,9 +126,9 @@ public class FriendService {
 
     //친구 요청 보내기
     @Transactional
-    public ResponseDto<?> friendAdd(Long id, User user){
+    public ResponseDto<?> friendAdd(Long id, UserDetails userDetails){
         try{
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
 
             if(account==null){
                 return ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 해주시기 바랍니다.");
@@ -183,9 +184,9 @@ public class FriendService {
 
     //요청 받은 친구 목록
     @Transactional
-    public ResponseDto<?> friendRequest(User user){
+    public ResponseDto<?> friendRequest(UserDetails userDetails){
         try{
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account==null){
                 return ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 바랍니다.");
             }
@@ -213,9 +214,9 @@ public class FriendService {
 
     //친구 요청 수락
     @Transactional
-    public ResponseDto<?> friendAccept(Long id, User user){
+    public ResponseDto<?> friendAccept(Long id, UserDetails userDetails){
       try{
-          Account account = accountRepository.findByEmail(user.getUsername());
+          Account account = accountRepository.findByEmail(userDetails.getUsername());
           if(account==null){
               return ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 바랍니다.");
           }
@@ -235,9 +236,9 @@ public class FriendService {
     }
 
     @Transactional
-    public ResponseDto<?> friendDelete(Long id, User user){
+    public ResponseDto<?> friendDelete(Long id, UserDetails userDetails){
         try{
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account==null){
                 return ResponseDto.setFailed("001", "사용자가 없습니다. 다시 로그인 바랍니다.");
             }

@@ -15,6 +15,4 @@ public class ProfileDto {
     private String name;
     private LocalDate createAt;
     private List<ProfileBlogDto> blogData;
-
-
 }

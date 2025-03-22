@@ -12,7 +12,7 @@ public class ChatMessageDto {
     private String name;
     private String email;
     private String content;
-    private LocalDate localDate;
+    private LocalDate createAt;
     private MessageTypeEnum type;
 
 }
