@@ -11,6 +11,7 @@ import individual.blog.domain.entity.Img;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +32,9 @@ public class BlogWriteService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public ResponseDto<ResponseDto<BlogAddDto>> blogWirte(BlogAddDto blogAddDto, User user){
+    public ResponseDto<ResponseDto<BlogAddDto>> blogWirte(BlogAddDto blogAddDto, UserDetails userDetails){
         try{
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account==null){
                 return ResponseDto.setFailed("500", "다시 로그인 해주시기 바랍니다.");
             }

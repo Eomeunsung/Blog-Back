@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,10 +59,10 @@ public class BlogController {
     }
 
     @PostMapping("/write")
-    public ResponseEntity<ResponseDto<BlogAddDto>> blogWrite(@RequestBody BlogAddDto blogAddDto, @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseDto<BlogAddDto>> blogWrite(@RequestBody BlogAddDto blogAddDto, @AuthenticationPrincipal UserDetails userDetails){
 
         log.info("쓰기 dto "+blogAddDto.getTitle()+" "+blogAddDto.getContent());
-        ResponseDto responseDto = blogWriteService.blogWirte(blogAddDto, user);
+        ResponseDto responseDto = blogWriteService.blogWirte(blogAddDto, userDetails);
         if(responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
@@ -70,14 +71,14 @@ public class BlogController {
     }
 
     @DeleteMapping("/{blogId}")
-    public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId, @AuthenticationPrincipal User user){
-        return blogDeleteService.blogDelete(blogId, user);
+    public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId, @AuthenticationPrincipal UserDetails userDetails){
+        return blogDeleteService.blogDelete(blogId, userDetails);
     }
 
     @PutMapping("")
-    public ResponseEntity<ResponseDto<Object>> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto, @AuthenticationPrincipal User user){
+    public ResponseEntity<ResponseDto<Object>> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto, @AuthenticationPrincipal UserDetails userDetails){
         log.info("블로그 아이이디 "+blogUpdateDto.getId());
-        ResponseDto<Object> responseDto = blogUpdateService.blogUpdate(blogUpdateDto, user);
+        ResponseDto<Object> responseDto = blogUpdateService.blogUpdate(blogUpdateDto, userDetails);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 

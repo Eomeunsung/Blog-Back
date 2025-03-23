@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,9 +29,9 @@ public class CommentWriteService {
 
     private final BlogRepository blogRepository;
     @Transactional
-    public ResponseDto<?> commentWrite(CommentWriteDto commentWriteDto, User user){
+    public ResponseDto<?> commentWrite(CommentWriteDto commentWriteDto, UserDetails userDetails){
         try{
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account==null){
                 return ResponseDto.setFailed("C000", "로그인 해주시기 바랍니다.");
             }

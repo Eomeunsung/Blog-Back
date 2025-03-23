@@ -28,7 +28,12 @@ public class JwtUtil {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
+//    @Value("${jwt.refresh.secret.key}")
+//    private String refreshSecretKey;
+
     private Key key;
+
+//    private Key refreshKey;
 
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -36,6 +41,9 @@ public class JwtUtil {
     public void init(){
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
+
+//        byte[] refreshBytes = Base64.getDecoder().decode(refreshSecretKey);
+//        refreshKey = Keys.hmacShaKeyFor(refreshBytes);
     }
 
 
@@ -45,7 +53,18 @@ public class JwtUtil {
                 .setClaims(createClaims(userDetails))
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*60*1))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 1)) // 1시간
+                .signWith(key, signatureAlgorithm)
+                .compact();
+    }
+
+    public String refreshCreateToken(UserDetails userDetails){
+        return Jwts.builder()
+                .setHeader(createHeader())
+                .setClaims(createClaims(userDetails))
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7일
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
@@ -76,6 +95,19 @@ public class JwtUtil {
         }
 
     }
+
+//    //refresh JWT 토큰 모든 클레임 추출 메서드
+//    private Claims refreshExtractAllClaims(String token){
+//        try{
+//            return Jwts.parser()
+//                    .setSigningKey(refreshKey)
+//                    .build()
+//                    .parseClaimsJws(token)
+//                    .getBody();
+//        }catch (ExpiredJwtException e){
+//            throw new JwtException("Expired JWT token");
+//        }
+//    }
 
 
     // 토큰 만료 여부를 확인하는 메서드

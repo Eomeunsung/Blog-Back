@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +27,14 @@ public class BlogUpdateService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public ResponseDto<Object> blogUpdate(BlogUpdateDto blogUpdateDto, User user) {
+    public ResponseDto<Object> blogUpdate(BlogUpdateDto blogUpdateDto, UserDetails userDetails) {
         try{
             Long id = blogUpdateDto.getId();
             Optional<Blog> blogOptional = blogRepository.findById(id);
 
             blogOptional.orElseThrow(() -> new IllegalArgumentException("블로그 정보를 찾을 수 없습니다."));
 
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account==null){
                 return ResponseDto.setFailed("500", "유저 정보를 찾을 수 없습니다. 다시 로그인 해주십시오");
             }

@@ -8,5 +8,6 @@ import lombok.Setter;
 public class InfoDto {
     String name;
     String email;
-    String jwt;
+    String accessToken;
+    String refreshToken;
 }

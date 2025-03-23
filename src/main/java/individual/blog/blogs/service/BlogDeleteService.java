@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +34,10 @@ public class BlogDeleteService {
 
 
     @Transactional
-    public ResponseEntity blogDelete(Long blogId, User user) {
+    public ResponseEntity blogDelete(Long blogId, UserDetails userDetails) {
         try {
 
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account==null){
                 ResponseDto responseDto = ResponseDto.setFailed("404", "Blog를 찾을 수 없습니다.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);

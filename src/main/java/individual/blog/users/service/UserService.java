@@ -7,6 +7,7 @@ import individual.blog.domain.entity.Role;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.domain.repository.RoleRepository;
 import individual.blog.security.jwt.JwtUtil;
+import individual.blog.security.jwt.repository.RefreshTokenRepository;
 import individual.blog.users.dto.*;
 import individual.blog.domain.repository.AccountRepository;
 import jakarta.transaction.Transactional;
@@ -39,6 +40,8 @@ public class UserService {
     private final RoleRepository roleRepository;
 
     private final BlogRepository blogRepository;
+
+    private final RefreshTokenRepository refreshTokenRepository;
     @Transactional
     public ResponseDto<?> create(SignUpDto signUpDto){
         try{
@@ -75,11 +78,14 @@ public class UserService {
                 return ResponseDto.setFailed("403","존재하지 않는 회원입니다.");
             }
             final UserDetails userDetails = userDetailsService.loadUserByUsername(account.getEmail());
-            final String jwt = jwtUtil.createToken(userDetails);
+            final String accessToken = jwtUtil.createToken(userDetails);
+            final String refreshToken = jwtUtil.refreshCreateToken(userDetails);
             InfoDto infoDto = new InfoDto();
             infoDto.setName(account.getName());
             infoDto.setEmail(email);
-            infoDto.setJwt(jwt);
+            infoDto.setAccessToken(accessToken);
+            infoDto.setRefreshToken(refreshToken);
+            refreshTokenRepository.save(email, refreshToken);
             return ResponseDto.setSuccess("200","로그인 성공", infoDto);
         }catch (Exception e){
             return ResponseDto.setFailed("403", "로그인 다시 진행해 주시기 바랍니다.");
