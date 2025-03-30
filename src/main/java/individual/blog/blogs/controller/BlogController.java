@@ -72,6 +72,7 @@ public class BlogController {
 
     @DeleteMapping("/{blogId}")
     public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId, @AuthenticationPrincipal UserDetails userDetails){
+        log.info("삭제할 아이디 "+blogId);
         return blogDeleteService.blogDelete(blogId, userDetails);
     }
 

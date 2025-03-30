@@ -2,9 +2,11 @@ package individual.blog.blogs.service;
 
 import individual.blog.domain.entity.Account;
 import individual.blog.domain.entity.Blog;
+import individual.blog.domain.entity.Comment;
 import individual.blog.domain.entity.Img;
 import individual.blog.domain.repository.AccountRepository;
 import individual.blog.domain.repository.BlogRepository;
+import individual.blog.domain.repository.CommentRepository;
 import individual.blog.domain.repository.ImgRepository;
 import individual.blog.reponse.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +31,14 @@ import java.util.Set;
 @Slf4j
 public class BlogDeleteService {
     private final BlogRepository blogRepository;
-    private final ImgRepository imgRepostiory;
+    private final ImgRepository imgRepository;
     private final AccountRepository accountRepository;
+    private final CommentRepository commentRepository;
 
 
     @Transactional
     public ResponseEntity blogDelete(Long blogId, UserDetails userDetails) {
+        log.info("들어온 삭제 서비스 아이디 "+blogId);
         try {
 
             Account account = accountRepository.findByEmail(userDetails.getUsername());
@@ -46,14 +50,25 @@ public class BlogDeleteService {
             Blog blog = blogRepository.findById(blogId)
                     .orElseThrow(() -> new IllegalArgumentException("Blog 못 찾음"));
 
+            List<Comment> commentList = commentRepository.findByBlog_Id(blog.getId());
+
+
+            if(!commentList.isEmpty()){
+                for(Comment comment : commentList){
+                    commentRepository.delete(comment);
+                }
+            }
+
             Account ac = blog.getAccount();
             if(ac==null){
                 ResponseDto responseDto = ResponseDto.setFailed("403", "권한이 없습니다.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
             }
 
+
+
             // Img 조회 및 삭제
-            List<Img> imgList = imgRepostiory.findByBlog_Id(blogId);
+            List<Img> imgList = imgRepository.findByBlog_Id(blogId);
             if (!imgList.isEmpty()) {
                 for (Img img : imgList) {
                     String url = img.getUrlImg(); // ex: "http://localhost:8080/Img/example.jpg"
@@ -61,8 +76,12 @@ public class BlogDeleteService {
                     log.info("삭제할 이름 "+filePath);
                     Path path = Path.of(filePath);
                     try{
-                        Files.deleteIfExists(path);
-                        imgRepostiory.delete(img);
+                        if(Files.exists(path)){
+                            Files.deleteIfExists(path);
+                        }
+                        if(img!=null){
+                            imgRepository.delete(img);
+                        }
                     }catch (IOException e){
                         e.printStackTrace();
                     }

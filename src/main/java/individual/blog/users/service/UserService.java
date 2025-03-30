@@ -81,6 +81,7 @@ public class UserService {
             final String accessToken = jwtUtil.createToken(userDetails);
             final String refreshToken = jwtUtil.refreshCreateToken(userDetails);
             InfoDto infoDto = new InfoDto();
+            log.info("로그인 이메일 "+account.getName());
             infoDto.setName(account.getName());
             infoDto.setEmail(email);
             infoDto.setAccessToken(accessToken);
@@ -125,9 +126,9 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<?> myProfileUpdate(NameDto nameDto, User user){
+    public ResponseDto<?> myProfileUpdate(NameDto nameDto, UserDetails userDetails){
         try{
-            Account account = accountRepository.findByEmail(user.getUsername());
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
             if(account ==null){
                 return ResponseDto.setFailed("U000", "다시 로그인 해주시기 바랍니다.");
             }

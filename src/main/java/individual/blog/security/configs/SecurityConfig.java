@@ -5,19 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -28,11 +24,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors(cors -> cors.configurationSource(configurationSource()));
+
+//        http.cors((cors)->cors.configurationSource(configurationSource()));
+
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화 (테스트용)
+                .csrf(csrf -> csrf.disable())// CSRF 보호 비활성화 (테스트용)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
-                        .requestMatchers("user/**").permitAll()  // 여기서 `/signup` 추가!
+                        .requestMatchers("/user/login").permitAll()  // 여기서 `/signup` 추가!
                         .requestMatchers("/blog/list", "blog/{blogId}","/**").permitAll()
                         .requestMatchers("/ws/**", "/topic/**", "/app/**").permitAll()
                         .requestMatchers("/blog/**","/upload/**").hasRole("USER")
@@ -46,4 +47,15 @@ public class SecurityConfig {
     }
 
 
+//    @Bean
+//    public UrlBasedCorsConfigurationSource configurationSource(){
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("*"));
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
+//        configuration.setAllowCredentials(false);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**",configuration);
+//        return source;
+//
+//    }
 }

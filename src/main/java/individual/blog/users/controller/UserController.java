@@ -53,8 +53,8 @@ public class UserController {
     }
 
     @PutMapping("/myprofile")
-    public ResponseEntity<ResponseDto<?>> myProfileUpdate(@RequestBody NameDto nameDto, @AuthenticationPrincipal User user){
-        ResponseDto responseDto = userService.myProfileUpdate(nameDto, user);
+    public ResponseEntity<ResponseDto<?>> myProfileUpdate(@RequestBody NameDto nameDto, @AuthenticationPrincipal UserDetails userDetails){
+        ResponseDto responseDto = userService.myProfileUpdate(nameDto, userDetails);
         if(responseDto.getCode().equals("U200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{

@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +49,8 @@ public class FriendController {
         }
     }
 
+
+    //친구 추가 요청
     @PostMapping("friendAdd/{id}")
     public ResponseEntity<ResponseDto<?>> friendAdd(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
         log.info("들어온 친구 추가 "+id);
@@ -71,6 +72,7 @@ public class FriendController {
         }
     }
 
+    //요청 받은 친구 조회
     @GetMapping("/friendRequest")
     public ResponseEntity<ResponseDto<?>> friendRequest(@AuthenticationPrincipal UserDetails userDetails){
         ResponseDto responseDto = friendService.friendRequest(userDetails);

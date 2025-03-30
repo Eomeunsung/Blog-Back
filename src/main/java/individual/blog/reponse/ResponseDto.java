@@ -26,8 +26,8 @@ public class ResponseDto <T> implements Serializable {
         return new ResponseDto<>(code, 500, message, null);
     }
 
-    public static <T> ResponseDto<T> setFailedMessage(String message){
-        return new ResponseDto<>("000",0,message, null);
+    public static <T> ResponseDto<T> setFailedMessage(String code, String message, T data){
+        return new ResponseDto<>(code,0,message, data);
     }
 
 

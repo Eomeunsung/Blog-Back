@@ -28,12 +28,7 @@ public class JwtUtil {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
-//    @Value("${jwt.refresh.secret.key}")
-//    private String refreshSecretKey;
-
     private Key key;
-
-//    private Key refreshKey;
 
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -41,9 +36,6 @@ public class JwtUtil {
     public void init(){
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
-
-//        byte[] refreshBytes = Base64.getDecoder().decode(refreshSecretKey);
-//        refreshKey = Keys.hmacShaKeyFor(refreshBytes);
     }
 
 
@@ -53,7 +45,7 @@ public class JwtUtil {
                 .setClaims(createClaims(userDetails))
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 1)) // 1시간
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 30분
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
@@ -96,27 +88,23 @@ public class JwtUtil {
 
     }
 
-//    //refresh JWT 토큰 모든 클레임 추출 메서드
-//    private Claims refreshExtractAllClaims(String token){
-//        try{
-//            return Jwts.parser()
-//                    .setSigningKey(refreshKey)
-//                    .build()
-//                    .parseClaimsJws(token)
-//                    .getBody();
-//        }catch (ExpiredJwtException e){
-//            throw new JwtException("Expired JWT token");
-//        }
-//    }
-
-
     // 토큰 만료 여부를 확인하는 메서드
     private Boolean isTokenExpired(String token){
+
         return extractExpired(token).before(new Date());
     }
 
+//    // 토큰 10분 전 여부를 확인하는 메서드 (10분 전 기준)
+//    private Boolean tokenExpired10Minutes(String token) {
+//        // 현재 시간에서 10분 전의 시간 생성
+//        Date tenMinutesLater = new Date(System.currentTimeMillis() + (1000 * 60 * 10));
+//
+//        // 만료 시간이 10분 후보다 이전인지 확인
+//        return extractExpired(token).before(tenMinutesLater);
+//    }
+
     // 토큰에서 만료 시간을 추출하는 메서드
-    private Date extractExpired(String token){
+    public Date extractExpired(String token){
         return extractClaims(token, Claims::getExpiration);
     }
 

@@ -73,7 +73,7 @@ public class BlogUpdateService {
                 }
                 imgRepostiory.saveAll(imgs);
             }
-            return ResponseDto.setSuccess("200", "글 작성 성공", null);
+            return ResponseDto.setSuccess("200", "글 수정 성공", null);
         }catch (Exception e){
             return ResponseDto.setFailed("500", "글 수정 다시 해주십시오");
         }

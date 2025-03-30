@@ -20,12 +20,12 @@ public class Comment implements Serializable {
     private Long id;
 
     // 댓글을 작성한 Account와의 관계
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne
     @JoinColumn(name = "account_id", nullable = false) // 외래 키 설정
     private Account account;
 
     // 댓글이 속한 Blog와의 관계
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne
     @JoinColumn(name = "blog_id", nullable = false) // 외래 키 설정
     private Blog blog;
 

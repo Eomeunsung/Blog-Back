@@ -1,5 +1,6 @@
 package individual.blog.security.jwt;
 
+import individual.blog.reponse.ResponseDto;
 import individual.blog.security.service.CustomUserDetailService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -40,14 +41,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 email = jwtUtil.extractUser(jwt);
 
             }catch (Exception e) {
-                response.setStatus(HttpStatus.UNAUTHORIZED.value()); //401
-                response.getWriter().write(e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"error\":\"JWT에러\", \"message\":\"" + e.getMessage() + "\"}");
                 return;
             }
         }
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try{
                 UserDetails userDetails = this.userDetailService.loadUserByUsername(email);
+
                 if(jwtUtil.isValidateToken(jwt, userDetails)){
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
@@ -55,14 +58,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     log.info("token 토큰 "+usernamePasswordAuthenticationToken);
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    log.info("ContextHolder 저장된 유저 "+SecurityContextHolder.getContext().getAuthentication().getName());
                 }
             } catch (JwtException e) {
-                response.setStatus(HttpStatus.UNAUTHORIZED.value()); //401
-                response.getWriter().write(e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"error\":\"JWT에러\", \"message\":\"" + e.getMessage() + "\"}");
+                return;
             } catch (Exception e) {
                 // 기타 예외 처리
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value()); //500 에러
                 response.getWriter().write("JWT Error");
+                return;
             }
 
         }
