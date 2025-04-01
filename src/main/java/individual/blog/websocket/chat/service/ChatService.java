@@ -55,6 +55,11 @@ public class ChatService {
                         chatRoomListDto.setId(chatRoom.get().getId());
                         chatRoomListDto.setName(chatRoom.get().getName());
                         chatRoomListDto.setCreateAt(chatRoom.get().getLocalDate());
+                        if(chatRoomUser.getType().equals(ChatType.GROUP)){
+                            chatRoomListDto.setType("단체방");
+                        }else{
+                            chatRoomListDto.setType("개인방");
+                        }
                         chatRoomListDtoList.add(chatRoomListDto);
                     }
                 }
@@ -151,6 +156,21 @@ public class ChatService {
                     chatMessageGetDtoList.add(chatMessageGetDto);
                 }
                 chatGetDto.setChatMessageGetDtoList(chatMessageGetDtoList);
+            }
+
+            List<ChatRoomUser> chatUser = chatRoomUserRepository.findByChatRoom_id(roomId);
+            if(chatUser.isEmpty()){
+                log.info("비었음");
+            }else{
+                log.info("안비었음");
+            }
+            if(!chatUser.isEmpty()){
+                List<String> user = new ArrayList<>();
+                for(ChatRoomUser chatRoomUser : chatUser){
+                    log.info("유저 이름 "+chatRoomUser.getAccount().getName());
+                    user.add(chatRoomUser.getAccount().getName());
+                }
+                chatGetDto.setUsername(user);
             }
 
             return ResponseDto.setSuccess("200", "채팅방 가져오기 성공", chatGetDto);

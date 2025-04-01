@@ -13,4 +13,5 @@ public class ChatRoomListDto {
     private String name;
     private String content;
     private LocalDate createAt;
+    private String type;
 }

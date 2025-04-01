@@ -45,6 +45,8 @@ public class RefreshTokenService {
                 refreshDto.setRefreshToke("");
             }else{
                 String refreshToken = refreshTokenRepository.get(userDetails.getUsername());
+                String refreshToken2 = jwtUtil.refreshCreateToken(userDetails);
+                refreshTokenRepository.save(userDetails.getUsername(), refreshToken2);
                 refreshDto.setTokenFlag(true);
                 refreshDto.setRefreshToke(refreshToken);
             }
