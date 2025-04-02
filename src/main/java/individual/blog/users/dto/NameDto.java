@@ -5,4 +5,5 @@ import lombok.Getter;
 @Getter
 public class NameDto {
     String name;
+    String imgUrl;
 }

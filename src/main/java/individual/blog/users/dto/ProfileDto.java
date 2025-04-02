@@ -13,6 +13,8 @@ import java.util.List;
 public class ProfileDto {
     private String email;
     private String name;
+    private String imgUrl;
     private LocalDate createAt;
     private List<ProfileBlogDto> blogData;
+
 }

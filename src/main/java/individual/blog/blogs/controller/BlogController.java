@@ -12,6 +12,7 @@ import individual.blog.blogs.service.BlogWriteService;
 import individual.blog.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 @RequestMapping("/blog")
 public class BlogController {
     @Value("${spring.blog.upload.path}")
@@ -85,6 +86,7 @@ public class BlogController {
 
     @PostMapping(value = "/upload", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> imgUpload(@RequestPart(value="files", required=false) List<MultipartFile> files){
+        log.info("서버에서 받은 이미지 "+files);
         List<String> savedFilesDeatil = new ArrayList<>();
         if(files != null){
             try {

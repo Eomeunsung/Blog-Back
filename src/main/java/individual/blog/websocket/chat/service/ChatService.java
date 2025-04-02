@@ -159,15 +159,9 @@ public class ChatService {
             }
 
             List<ChatRoomUser> chatUser = chatRoomUserRepository.findByChatRoom_id(roomId);
-            if(chatUser.isEmpty()){
-                log.info("비었음");
-            }else{
-                log.info("안비었음");
-            }
             if(!chatUser.isEmpty()){
                 List<String> user = new ArrayList<>();
                 for(ChatRoomUser chatRoomUser : chatUser){
-                    log.info("유저 이름 "+chatRoomUser.getAccount().getName());
                     user.add(chatRoomUser.getAccount().getName());
                 }
                 chatGetDto.setUsername(user);
@@ -206,6 +200,15 @@ public class ChatService {
                 }
                 chatGetDto.setChatMessageGetDtoList(chatMessageGetDtoList);
             }
+            List<ChatRoomUser> chatUser = chatRoomUserRepository.findByChatRoom_id(id);
+            if(!chatUser.isEmpty()){
+                List<String> user = new ArrayList<>();
+                for(ChatRoomUser chatRoomUser : chatUser){
+                    user.add(chatRoomUser.getAccount().getName());
+                }
+                chatGetDto.setUsername(user);
+            }
+
             return ResponseDto.setSuccess("200", "채팅방 가져오기 성공", chatGetDto);
         }catch (Exception e){
             return ResponseDto.setFailed("002", "알 수 없는 오류 발생");

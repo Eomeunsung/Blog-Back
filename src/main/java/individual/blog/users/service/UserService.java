@@ -106,6 +106,7 @@ public class UserService {
             profileDto.setName(account.getName());
             profileDto.setEmail(account.getEmail());
             profileDto.setCreateAt(account.getCreateAt());
+            profileDto.setImgUrl(account.getProfileImg());
             List<Blog> blogList = blogRepository.findByAccount_Id(id);
             List<ProfileBlogDto> profileBlogDtoList = new ArrayList<>();
             if(!blogList.isEmpty()){
@@ -133,6 +134,7 @@ public class UserService {
                 return ResponseDto.setFailed("U000", "다시 로그인 해주시기 바랍니다.");
             }
             account.setName(nameDto.getName());
+            account.setProfileImg(nameDto.getImgUrl());
             accountRepository.save(account);
             return ResponseDto.setSuccess("U200", "닉네임 수정 완료");
         }catch (Exception e){

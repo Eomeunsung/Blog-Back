@@ -38,6 +38,9 @@ public class Account implements Serializable {
     @Column
     private LocalDate createAt;
 
+    @Column
+    private String profileImg;
+
     // 1:N 관계에서 외래 키는 Blog 테이블에만 존재하며,
     // Account 엔티티의 필드에서만 관계를 관리합니다.
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
