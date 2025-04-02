@@ -1,5 +1,6 @@
 package individual.blog.users.controller;
 
+import individual.blog.domain.repository.AccountRepository;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.users.dto.NameDto;
 import individual.blog.users.dto.SignInDto;
@@ -78,7 +79,6 @@ public class UserController {
 
     @PostMapping(value = "/upload", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> imgUpload(@RequestPart(value="files", required=false) MultipartFile file){
-
         if(file != null){
             try {
                 String savedFile = customFileUtil.changeSaveFiles(file);

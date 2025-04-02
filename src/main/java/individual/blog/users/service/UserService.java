@@ -1,19 +1,20 @@
 package individual.blog.users.service;
 
-import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.entity.Account;
 import individual.blog.domain.entity.Blog;
 import individual.blog.domain.entity.Role;
-import individual.blog.reponse.ResponseDto;
+import individual.blog.domain.repository.AccountRepository;
+import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.repository.RoleRepository;
+import individual.blog.reponse.ResponseDto;
 import individual.blog.security.jwt.JwtUtil;
 import individual.blog.security.jwt.repository.RefreshTokenRepository;
 import individual.blog.users.dto.*;
-import individual.blog.domain.repository.AccountRepository;
+import individual.blog.util.CustomFileUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +43,12 @@ public class UserService {
     private final BlogRepository blogRepository;
 
     private final RefreshTokenRepository refreshTokenRepository;
+
+    private final CustomFileUtil customFileUtil;
+
+//    @Value("PORT_URL")
+//    private final String port;
+
     @Transactional
     public ResponseDto<?> create(SignUpDto signUpDto){
         try{
@@ -106,6 +113,7 @@ public class UserService {
             profileDto.setName(account.getName());
             profileDto.setEmail(account.getEmail());
             profileDto.setCreateAt(account.getCreateAt());
+//            profileDto.setImgUrl(port+"/"+account.getProfileImg());
             profileDto.setImgUrl(account.getProfileImg());
             List<Blog> blogList = blogRepository.findByAccount_Id(id);
             List<ProfileBlogDto> profileBlogDtoList = new ArrayList<>();
@@ -133,6 +141,12 @@ public class UserService {
             if(account ==null){
                 return ResponseDto.setFailed("U000", "다시 로그인 해주시기 바랍니다.");
             }
+            if(nameDto.getImgUrl()!=null){
+                if(!account.getProfileImg().equals("default.png")){
+                    String deleteImg = account.getProfileImg();
+                    customFileUtil.deleteProfileImg(deleteImg);
+                }
+            }
             account.setName(nameDto.getName());
             account.setProfileImg(nameDto.getImgUrl());
             accountRepository.save(account);
@@ -140,6 +154,5 @@ public class UserService {
         }catch (Exception e){
             return ResponseDto.setFailed("U001", "오류가 발생하였습니다. 다시 로그인해 주시기 바랍니다.");
         }
-
     }
 }

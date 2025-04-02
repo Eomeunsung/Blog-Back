@@ -160,11 +160,15 @@ public class ChatService {
 
             List<ChatRoomUser> chatUser = chatRoomUserRepository.findByChatRoom_id(roomId);
             if(!chatUser.isEmpty()){
-                List<String> user = new ArrayList<>();
+                List<ChatUserProfileDto> userProfileDtoList = new ArrayList<>();
                 for(ChatRoomUser chatRoomUser : chatUser){
-                    user.add(chatRoomUser.getAccount().getName());
+                    ChatUserProfileDto chatUserProfileDto = new ChatUserProfileDto();
+                    chatUserProfileDto.setId(chatRoomUser.getAccount().getId());
+                    chatUserProfileDto.setName(chatRoomUser.getAccount().getName());
+                    chatUserProfileDto.setImgURl(chatRoomUser.getAccount().getProfileImg());
+                    userProfileDtoList.add(chatUserProfileDto);
                 }
-                chatGetDto.setUsername(user);
+                chatGetDto.setUserprofile(userProfileDtoList);
             }
 
             return ResponseDto.setSuccess("200", "채팅방 가져오기 성공", chatGetDto);
@@ -202,11 +206,15 @@ public class ChatService {
             }
             List<ChatRoomUser> chatUser = chatRoomUserRepository.findByChatRoom_id(id);
             if(!chatUser.isEmpty()){
-                List<String> user = new ArrayList<>();
+                List<ChatUserProfileDto> userProfileDtoList = new ArrayList<>();
                 for(ChatRoomUser chatRoomUser : chatUser){
-                    user.add(chatRoomUser.getAccount().getName());
+                    ChatUserProfileDto chatUserProfileDto = new ChatUserProfileDto();
+                    chatUserProfileDto.setId(chatRoomUser.getAccount().getId());
+                    chatUserProfileDto.setName(chatRoomUser.getAccount().getName());
+                    chatUserProfileDto.setImgURl(chatRoomUser.getAccount().getProfileImg());
+                    userProfileDtoList.add(chatUserProfileDto);
                 }
-                chatGetDto.setUsername(user);
+                chatGetDto.setUserprofile(userProfileDtoList);
             }
 
             return ResponseDto.setSuccess("200", "채팅방 가져오기 성공", chatGetDto);

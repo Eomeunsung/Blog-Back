@@ -165,6 +165,7 @@ public class FriendService {
             profileDto.setEmail(account.getEmail());
             profileDto.setName(account.getName());
             profileDto.setCreateAt(account.getCreateAt());
+            profileDto.setImgUrl(account.getProfileImg());
             if(!account.getBlogs().isEmpty()){
                 List<ProfileBlogDto> profileBlogDtoList = new ArrayList<>();
                 for(Blog blog : account.getBlogs()){

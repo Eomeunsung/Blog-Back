@@ -72,13 +72,29 @@ public class CustomFileUtil {
         String saveName = UUID.randomUUID().toString() + extension;
         try{
             Path savePath = Paths.get(uploadPath, saveName);
+
             Files.copy(file.getInputStream(), savePath);
         }catch (IOException e){
             throw new IOException("파일 저장 중 오류 발생: " + file.getOriginalFilename(), e);
         }
         log.info("변경된 파일 이름: {}", saveName);
         return saveName;
-
     }
+
+    public void deleteProfileImg(String fileName) throws IOException{
+        if (fileName == null) {
+            log.info("삭제할 파일이 없음");
+            return;
+        }
+        Path filePath = Paths.get(uploadPath, fileName);
+        try {
+            Files.deleteIfExists(filePath);
+            log.info("파일 삭제 완료: " + fileName);
+        } catch (IOException e) {
+            log.error("파일 삭제 중 오류 발생: " + fileName, e);
+            throw new IOException("파일 삭제 중 오류 발생: " + fileName, e);
+        }
+    }
+
 
 }

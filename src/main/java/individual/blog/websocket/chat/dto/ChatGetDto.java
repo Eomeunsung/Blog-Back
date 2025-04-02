@@ -11,5 +11,5 @@ public class ChatGetDto {
 
     private Long roomId;
     private List<ChatMessageGetDto> chatMessageGetDtoList;
-    private List<String> username;
+    private List<ChatUserProfileDto> userprofile;
 }
