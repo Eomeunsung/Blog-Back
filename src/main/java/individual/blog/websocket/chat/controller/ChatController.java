@@ -4,6 +4,7 @@ import individual.blog.domain.entity.Account;
 import individual.blog.domain.repository.AccountRepository;
 import individual.blog.reponse.ResponseDto;
 import individual.blog.websocket.chat.dto.ChatGroupCreateDto;
+import individual.blog.websocket.chat.dto.NameUpdateDto;
 import individual.blog.websocket.chat.service.ChatService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,6 +89,16 @@ public class ChatController {
         log.info("들어온 그룹 이름 "+chatGroupCreateDto.getGroupName()+" "+chatGroupCreateDto.getChatUserIdDtoList());
         ResponseDto responseDto = chatService.createGroupChat(chatGroupCreateDto, userDetails);
         if (responseDto.getCode().equals("200") || responseDto.getCode().equals("001")){
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/name/update")
+    public ResponseEntity<ResponseDto<?>> chatUpdateName(@RequestBody NameUpdateDto nameUpdateDto, @AuthenticationPrincipal UserDetails userDetails){
+        ResponseDto responseDto = chatService.updateName(nameUpdateDto, userDetails);
+        if (responseDto.getCode().equals("200")){
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }else{
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);

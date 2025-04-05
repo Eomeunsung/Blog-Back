@@ -268,5 +268,26 @@ public class ChatService {
         }
     }
 
+    @Transactional
+    public ResponseDto<?> updateName(NameUpdateDto nameUpdateDto, UserDetails userDetails){
+        try{
+            Account account = accountRepository.findByEmail(userDetails.getUsername());
+            if(account == null){
+                return ResponseDto.setFailed("001","유저가 없습니다. 다시 로그인 해주시기 바랍니다.");
+            }
+            Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(nameUpdateDto.getId());
+            if(chatRoomOptional==null){
+                return ResponseDto.setFailed("002","방  정보가 없습니다.");
+            }
+
+            ChatRoom chatRoom = chatRoomOptional.get();
+            chatRoom.setName(nameUpdateDto.getName());
+            chatRoomRepository.save(chatRoom);
+            return ResponseDto.setSuccess("200", "방 이름 수정 성공", null);
+        }catch (Exception e){
+            return ResponseDto.setFailed("002", "알 수 없는 오류 발생");
+        }
+    }
+
 
 }
