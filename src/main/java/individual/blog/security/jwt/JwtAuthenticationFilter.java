@@ -67,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             } catch (Exception e) {
                 // 기타 예외 처리
-                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value()); //500 에러
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //500 에러
                 response.getWriter().write("JWT Error");
                 return;
             }
