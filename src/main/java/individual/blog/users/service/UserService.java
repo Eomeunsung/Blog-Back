@@ -59,6 +59,7 @@ public class UserService {
             account.setEmail(signUpDto.getEmail());
             account.setName(signUpDto.getName());
             account.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+            account.setProfileImg("default.png");
             account.setCreateAt(LocalDate.now());
             Set<Role> role = roleRepository.findByRoleNameIn(signUpDto.getRoles());
             account.setUserRoles(role);

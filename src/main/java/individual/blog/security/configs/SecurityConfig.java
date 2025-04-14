@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())// CSRF 보호 비활성화 (테스트용)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/login").permitAll()  // 여기서 `/signup` 추가!
                         .requestMatchers("/blog/list", "blog/{blogId}","/**").permitAll()
                         .requestMatchers("/ws/**", "/topic/**", "/app/**").permitAll()
