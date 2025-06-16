@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: blog
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/blog?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 12345678
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+  blog:
+    upload:
+      path: Img
+
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+        - file:Img/
+
+jwt:
+  refresh:
+    secret:
+      key: acecdd6ae217517dcdeb8db20e0aa74c6c188680101a95c60b2996a8a1cfd51a2950393e36d8154eed556cc3994c85088aa002788da9aa5e33066bc56cd12d1e
+  secret:
+    key: 7ZWt7ZW0OTntmZTsnbTtjIXtlZzqta3snYTrhIjrqLjshLjqs4TroZzrgpjslYTqsIDsnpDtm4zrpa3tlZzqsJzrsJzsnpDrpbzrp4zrk6TslrTqsIDsnpA=
+
+#debug : true
+ # 24 hours: 24 * 60 * 60 * 1000 millisecond
+
