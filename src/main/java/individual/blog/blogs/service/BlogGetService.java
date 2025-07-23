@@ -9,6 +9,7 @@ import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogListDto;
 import individual.blog.domain.repository.BlogRepository;
 import individual.blog.domain.entity.Blog;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,17 +18,13 @@ import java.util.*;
 
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class BlogGetService {
     private final BlogRepository blogRepository;
     private final CommentRepository commentRepository;
 
     private final AccountRepository accountRepository;
 
-    public BlogGetService(BlogRepository blogRepository, CommentRepository commentRepository, AccountRepository accountRepository) {
-        this.blogRepository = blogRepository;
-        this.commentRepository = commentRepository;
-        this.accountRepository = accountRepository;
-    }
 
     @Transactional
     public ResponseDto<List<BlogListDto>> blogList() {

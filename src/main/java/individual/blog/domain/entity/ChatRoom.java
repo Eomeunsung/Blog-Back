@@ -1,6 +1,5 @@
 package individual.blog.domain.entity;
 
-import individual.blog.domain.enums.ChatType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

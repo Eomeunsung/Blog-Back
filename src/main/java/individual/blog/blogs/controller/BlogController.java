@@ -5,20 +5,18 @@ import individual.blog.blogs.dto.BlogAddDto;
 import individual.blog.blogs.dto.BlogDetailDto;
 import individual.blog.blogs.dto.BlogListDto;
 import individual.blog.blogs.dto.BlogUpdateDto;
-import individual.blog.blogs.service.BlogDeleteService;
+import individual.blog.blogs.service.BlogDeleteServiceImpl;
 import individual.blog.blogs.service.BlogGetService;
 import individual.blog.blogs.service.BlogUpdateService;
 import individual.blog.blogs.service.BlogWriteService;
 import individual.blog.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +36,7 @@ public class BlogController {
 
     private final BlogGetService blogGetService;
     private final BlogWriteService blogWriteService;
-    private final BlogDeleteService blogDeleteService;
+    private final BlogDeleteServiceImpl blogDeleteService;
     private final CustomFileUtil customFileUtil;
     private final BlogUpdateService blogUpdateService;
 
