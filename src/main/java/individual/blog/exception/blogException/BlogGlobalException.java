@@ -11,6 +11,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class BlogGlobalException {
 
+    @ExceptionHandler(BlogGetException.class)
+    public ResponseEntity<ResponseDto> handleBlogGetException(BlogGetException ex){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ResponseDto.setFailed(ex.getErrorCode(), ex.getMessage()));
+    }
+
     @ExceptionHandler(DeleteException.class)
     public ResponseEntity<ResponseDto<?>> handleBlogDeleteException(DeleteException ex){
         return ResponseEntity

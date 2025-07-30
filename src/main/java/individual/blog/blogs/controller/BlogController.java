@@ -70,16 +70,15 @@ public class BlogController {
     }
 
     @DeleteMapping("/{blogId}")
-    public ResponseEntity<ResponseDto<Object>> blogDelete(@PathVariable Long blogId, @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<ResponseDto> blogDelete(@PathVariable Long blogId, @AuthenticationPrincipal UserDetails userDetails){
         log.info("삭제할 아이디 "+blogId);
         return blogDeleteService.blogDelete(blogId, userDetails);
     }
 
     @PutMapping("")
-    public ResponseEntity<ResponseDto<Object>> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto, @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<ResponseDto> blogUpdate(@RequestBody BlogUpdateDto blogUpdateDto, @AuthenticationPrincipal UserDetails userDetails){
         log.info("블로그 아이이디 "+blogUpdateDto.getId());
-        ResponseDto<Object> responseDto = blogUpdateService.blogUpdate(blogUpdateDto, userDetails);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return blogUpdateService.blogUpdate(blogUpdateDto, userDetails);
     }
 
     @PostMapping(value = "/upload", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)

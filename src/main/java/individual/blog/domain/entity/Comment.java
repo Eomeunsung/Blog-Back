@@ -1,6 +1,7 @@
 package individual.blog.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,11 +32,24 @@ public class Comment implements Serializable {
 
     private String name;
 
-
     // 추가적인 내용, 예를 들어 댓글 내용, 작성일 등을 추가할 수 있습니다.
     @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
     private LocalDate createdAt;  // 생성 시간 등
+
+    public Comment() {
+    }
+
+    @Builder
+    public Comment(Account account, Blog blog, String name, String content, LocalDate createdAt) {
+        this.account = account;
+        this.blog = blog;
+        this.name = name;
+        this.content = content;
+        this.createdAt = createdAt;
+    }
+
+
 }
